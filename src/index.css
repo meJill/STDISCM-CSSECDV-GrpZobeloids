@@ -11,3 +11,21 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+
+body{
+  background: #23242D;
+  min-height: 100vh;
+}
+
+.app-container{
+  border-radius: 12px;
+  height: fit-content;
+  text-align: center;
+  color: #DFE1E3;
+  
+}
+
+.app-container h1{
+  padding: 10px;
+}
