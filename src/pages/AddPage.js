@@ -4,7 +4,9 @@ function AddPage() {
   return (
     <section className = "add-page">
     {" "}
-    <h1> Add </h1>{" "}
+    <div className = "AddContainer">
+        <h1> Add </h1>
+    </div>
     <AddCharacterForm />
     
     </section>
