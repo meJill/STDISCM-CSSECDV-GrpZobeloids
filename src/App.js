@@ -8,6 +8,7 @@ import LoginPage from "./pages/LoginPage";
 import Layout from "./components/layout/Layout";
 
 import AddCharacterForm from "./components/actions/AddCharacterForm";
+import SignUpPage from "./pages/SignUpPage";
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/manage-page" element={<ManagePage />} />
           <Route path="/add-page" element={<AddPage />} />
           <Route path="/login-page" element={<LoginPage />} />
+          <Route path="/signup-page" element={<SignUpPage />} />
         </Routes>
       
       </div>
