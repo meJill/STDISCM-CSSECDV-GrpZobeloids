@@ -11,7 +11,7 @@ function GotoSignup() {
 function LoginPage() {
   return (
     <div className={classes.LoginContainer}>
-      <h1>LOGIN</h1>
+      <h1>Login</h1>
       <Card>
         <form className={classes.form}>
           <div className={classes.control}>
