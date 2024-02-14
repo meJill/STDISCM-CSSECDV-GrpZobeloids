@@ -5,6 +5,9 @@ const mysql = require('mysql2');
 
 const app = express();
 const config = require('./config');
+const bodyParser = require('body-parser');
+
+const cors = require('cors');
 
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
@@ -17,7 +20,27 @@ db.connect((err) => {
     throw err;
   }
   console.log('Connected to MySQL database');
+  
 });
+
+app.use(cors());
+app.use(bodyParser.json());
+
+app.post('/login', (req, res) => {
+  // Extract username and password from request body
+  const { username, password } = req.body;
+  console.log(req.body)
+  // Perform authentication logic here
+  // For demonstration, assuming a simple check
+  if (username === 'admin' && password === '123pass') {
+    // Return success response
+    res.status(200).json({ message: 'Login successful' });
+  } else {
+    // Return error response
+    res.status(401).json({ error: 'Invalid username or password' });
+  }
+});
+
 
 // Define routes for CRUD operations
 app.get('/api/data', (req, res) => {
