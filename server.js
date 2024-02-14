@@ -6,13 +6,16 @@ const mysql = require('mysql2');
 const app = express();
 const config = require('./config');
 const bodyParser = require('body-parser');
-
+const fs = require('fs');
+const multer = require('multer');
+const upload = multer({ dest: '/path/to/temporary/directory' });
 const cors = require('cors');
+const path = require('path');
 
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
 const db = mysql.createConnection(config.database);
-
+app.use(cors());
 
 // Connect to MySQL
 db.connect((err) => {
@@ -23,15 +26,36 @@ db.connect((err) => {
   
 });
 
-app.use(cors());
 app.use(bodyParser.json());
 
+app.post('/register', upload.single('file'), async (req, res) => {
+  const { username, password, email, pnumber, photo} = req.body;
+
+  try {
+    // Check if the username already exists
+    const [existingUser] = await db.promise().query(
+      'SELECT * FROM users WHERE username = ?',
+      [username]
+    );
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({ error: 'Username already exists' });
+    }
+
+    // Insert the new user into the database
+    await db.promise().query(
+      'INSERT INTO users (username, password, email, phone_no, profile_photo) VALUES (?, ?, ?, ?, ?)',
+      [username, password, email, pnumber, photo]
+    );
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}); 
+
 app.post('/login', (req, res) => {
-  // Extract username and password from request body
   const { username, password } = req.body;
-  console.log(req.body)
-  // Perform authentication logic here
-  // For demonstration, assuming a simple check
   db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, results) => {
     if (err) {
       res.status(500).json({ error: 'Internal server error' });
@@ -40,7 +64,8 @@ app.post('/login', (req, res) => {
 
     if (results.length === 1) {
       // User exists, return success response
-      res.status(200).json({ message: 'Login successful' });
+      
+      res.status(200).json({ message: 'Login successful', test: results.profile_photo });
     } else {
       // No user found with provided credentials, return error response
       res.status(401).json({ error: 'Invalid username or password' });

@@ -19,12 +19,9 @@ function LoginPage() {
     event.preventDefault();
     try {
       const response = await axios.post('http://localhost:5000/login', { username, password });
-      // Assuming the server responds with a success status (e.g., 200)
-      // Redirect user to another page or perform any necessary actions upon successful login
       setError('')
       console.log('Login successful:', response.data);
     } catch (error) {
-      // Handle login error (e.g., display error message)
       setError('Invalid username or password');
       console.error('Login failed:', error);
     }
@@ -39,7 +36,7 @@ function LoginPage() {
             <label htmlFor="uname">Username</label>
             <input 
               type="text" 
-              id="uname" 
+              id="username" 
               value={username} 
               onChange={(e) => setUsername(e.target.value)} 
               required 
