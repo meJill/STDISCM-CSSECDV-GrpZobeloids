@@ -32,13 +32,20 @@ app.post('/login', (req, res) => {
   console.log(req.body)
   // Perform authentication logic here
   // For demonstration, assuming a simple check
-  if (username === 'admin' && password === '123pass') {
-    // Return success response
-    res.status(200).json({ message: 'Login successful' });
-  } else {
-    // Return error response
-    res.status(401).json({ error: 'Invalid username or password' });
-  }
+  db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, results) => {
+    if (err) {
+      res.status(500).json({ error: 'Internal server error' });
+      return;
+    }
+
+    if (results.length === 1) {
+      // User exists, return success response
+      res.status(200).json({ message: 'Login successful' });
+    } else {
+      // No user found with provided credentials, return error response
+      res.status(401).json({ error: 'Invalid username or password' });
+    }
+  });
 });
 
 
