@@ -1,14 +1,11 @@
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import { Link, useNavigate } from 'react-router-dom'; // Import Link from react-router-dom
 import classes from './LoginPage.module.css';
 import Card from '../components/ui/Card';
 import React, {useState} from 'react';
 import axios from 'axios';
 
-function GotoSignup() {
-  return (
-    <Link to="/signup-page">Sign Up</Link>
-  );
-}
+
+  
 
 function LoginPage() {
   const [username, setUsername] = useState('');
@@ -25,6 +22,13 @@ function LoginPage() {
       setError('Invalid username or password');
       console.error('Login failed:', error);
     }
+  };
+
+  const navigate = useNavigate();
+
+  const navigateToSignup = () => {
+    // 👇️ navigate to /contacts
+    navigate('/signup-page');
   };
 
   return (
@@ -54,7 +58,7 @@ function LoginPage() {
           </div>
           {error && <p className={classes.error}>{error}</p>}
           <div className={classes.actions}>
-            <button className={classes.signup}><GotoSignup /></button>
+            <button className={classes.signup} onClick = {navigateToSignup}>Register</button>
             <button type="submit" className={classes.login}>Login</button>
           </div>
         </form>
