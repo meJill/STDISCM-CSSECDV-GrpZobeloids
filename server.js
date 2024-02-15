@@ -11,6 +11,7 @@ const multer = require('multer');
 const upload = multer({ dest: '/path/to/temporary/directory' });
 const cors = require('cors');
 const path = require('path');
+const bcrypt = require('bcrypt');
 
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
@@ -65,36 +66,56 @@ app.post('/register', upload.single('file'), async (req, res) => {
       return res.status(402).json({ error: 'Username already exists' });
     }
 
-    // Insert the new user into the database
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Insert the new user into the database with the hashed password
     await db.promise().query(
       'INSERT INTO users (username, password, email, phone_no, profile_photo) VALUES (?, ?, ?, ?, ?)',
-      [username, password, email, pnumber, photo]
+      [username, hashedPassword, email, pnumber, photo]
     );
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error('Error registering user:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-}); 
+res.status(201).json({ message: 'User registered successfully' });
+} catch (error) {
+console.error('Error registering user:', error);
+res.status(500).json({ error: 'Internal server error' });
+}
+});
 
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  db.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (err, results) => {
-    if (err) {
-      res.status(500).json({ error: 'Internal server error' });
-      return;
-    }
 
+<<<<<<< Updated upstream
     if (results.length === 1) {
       // User exists, return success response
       console.log(results)
       console.log(results[0]['profile_photo'])
       res.status(200).json({ message: 'Login successful', test: results[0]['profile_photo'] });
+=======
+  try {
+    // Fetch user from the database
+    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+
+    if (user.length === 1) {
+      // User exists, compare passwords
+      const hashedPassword = user[0].password;
+      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+      if (passwordMatch) {
+        // Passwords match, return success response
+        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo });
+      } else {
+        // Passwords do not match, return error response
+        res.status(401).json({ error: 'Invalid username or password' });
+      }
+>>>>>>> Stashed changes
     } else {
-      // No user found with provided credentials, return error response
+      // No user found with provided username, return error response
       res.status(401).json({ error: 'Invalid username or password' });
     }
-  });
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 
