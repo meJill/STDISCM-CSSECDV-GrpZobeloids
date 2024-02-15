@@ -32,12 +32,12 @@ app.post('/register', upload.single('file'), async (req, res) => {
   const { username, password, email, pnumber, photo} = req.body;
 
   try {
-    var regex = new RegExp("^[\da-zA-Z]*([\_\.\-][\da-zA-Z]+)*\@[\da-zA-Z]*\.[a-zA-Z]{2,}$"); 
+    var regex = new RegExp("^[0-9a-zA-Z]*([\_\.\-][0-9a-zA-Z]+)*\@[0-9a-zA-Z]*\.[a-zA-Z]{2,}$"); 
     if (!regex.test(email)) {
       return res.status(400).json({error: 'Invalid email format'})
     }
 
-    var regex2 = new RegExp("^\b{11,12}$");
+    var regex2 = new RegExp("^[0-9]{11,12}$");
     if (!regex2.test(pnumber)) {
       return res.status(401).json({error: 'Invalid phone number format'})
     }
