@@ -32,8 +32,21 @@ app.post('/register', upload.single('file'), async (req, res) => {
   const { username, password, email, pnumber, photo} = req.body;
 
   try {
-    var regex = new RegExp("^[0-9a-zA-Z]*([\_\.\-][0-9a-zA-Z]+)*\@[0-9a-zA-Z]*\.[a-zA-Z]{2,}$"); 
-    if (!regex.test(email)) {
+    var regex = new RegExp("^(?=(?=.*[A-Z]).{1}(?=.*[a-z]).{1}(?=.*[0-9]).{1}(?=.*[^A-Za-z0-9]).{1})([^;]){12,64}$");
+    console.log([password])
+    if (!regex.test(password)) {
+      if (password.length < 12) {
+        return res.status(403).json({error: 'Password too short'})
+      } else if (password.length > 64 ){
+        return res.status(403).json({error: 'Password too long'})
+      } else {
+        return res.status(403).json({error: 'Invalid Password'})
+      }
+    } 
+
+
+    var regex1 = new RegExp("^[0-9a-zA-Z]*([\_\.\-][0-9a-zA-Z]+)*\@[0-9a-zA-Z]*\.[a-zA-Z]{2,}$"); 
+    if (!regex1.test(email)) {
       return res.status(400).json({error: 'Invalid email format'})
     }
 
@@ -74,8 +87,9 @@ app.post('/login', (req, res) => {
 
     if (results.length === 1) {
       // User exists, return success response
-      
-      res.status(200).json({ message: 'Login successful', test: results.profile_photo });
+      console.log(results)
+      console.log(results[0]['profile_photo'])
+      res.status(200).json({ message: 'Login successful', test: results[0]['profile_photo'] });
     } else {
       // No user found with provided credentials, return error response
       res.status(401).json({ error: 'Invalid username or password' });

@@ -14,12 +14,12 @@ function SignUpPage() {
     const handleSignup = async (event) => {
         event.preventDefault();
         try {
-          const response = await axios.post('http://localhost:5000/register', { username, password, email, pnumber, photo });
-          setError('')
+            const response = await axios.post('http://localhost:5000/register', { username, password, email, pnumber, photo });
+            setError('')
           console.log('Signup successful:', response.data);
         } catch (error) {
-          setError('Invalid');
-          console.error('Signup failed:', error);
+            console.error('Signup failed:', error);
+            setError(error.response.data.error);
         }
     };
 

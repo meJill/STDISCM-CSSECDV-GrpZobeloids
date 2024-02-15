@@ -21,6 +21,7 @@ function LoginPage() {
       const response = await axios.post('http://localhost:5000/login', { username, password });
       setError('')
       console.log('Login successful:', response.data);
+      //setError(response.data.test.data.toString())
     } catch (error) {
       setError('Invalid username or password');
       console.error('Login failed:', error);
