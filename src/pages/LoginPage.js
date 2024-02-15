@@ -6,11 +6,13 @@ import Card from '../components/ui/Card';
 import axios from 'axios';
 import config from '../config';
 
+
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
 }
 
 function LoginPage() {
+  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -29,7 +31,8 @@ function LoginPage() {
       });
       setError("");
       console.log("Login successful:", response.data);
-      
+      console.log(response.username)
+      setError(response.data.message)
       // Your login logic
     } catch (error) {
       setError('Invalid username or password');
