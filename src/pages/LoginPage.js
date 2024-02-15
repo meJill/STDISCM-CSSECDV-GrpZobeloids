@@ -1,37 +1,35 @@
-import { Link, useNavigate } from "react-router-dom"; // Import Link from react-router-dom
-import classes from "./LoginPage.module.css";
-import Card from "../components/ui/Card";
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import ReCAPTCHA from 'react-google-recaptcha'; // Import ReCAPTCHA
+import classes from './LoginPage.module.css';
+import Card from '../components/ui/Card';
+import axios from 'axios';
+import config from '../config.js' 
 
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
 }
 
 function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:5000/login", {
-        username,
-        password,
-      });
-      setError("");
-      console.log("Login successful:", response.data);
-      //setError(response.data.test.data.toString())
+      // Your login logic
     } catch (error) {
-      setError("Invalid username or password");
-      console.error("Login failed:", error);
+      setError('Invalid username or password');
+      console.error('Login failed:', error);
     }
   };
+
   const navigate = useNavigate();
   const navSignUp = () => {
-    navigate("/signup-page");
+    navigate('/signup-page');
   };
+
   return (
     <div className={classes.LoginContainer}>
       <h1>LOGIN</h1>
@@ -58,6 +56,8 @@ function LoginPage() {
             />
           </div>
           {error && <p className={classes.error}>{error}</p>}
+          {/* Add ReCAPTCHA component */}
+          <ReCAPTCHA sitekey= {config.google_site_key} />
           <div className={classes.actions}>
             <button className={classes.signup} onClick={navSignUp}>
               Register

@@ -84,13 +84,6 @@ res.status(500).json({ error: 'Internal server error' });
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-<<<<<<< Updated upstream
-    if (results.length === 1) {
-      // User exists, return success response
-      console.log(results)
-      console.log(results[0]['profile_photo'])
-      res.status(200).json({ message: 'Login successful', test: results[0]['profile_photo'] });
-=======
   try {
     // Fetch user from the database
     const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
@@ -107,7 +100,6 @@ app.post('/login', async (req, res) => {
         // Passwords do not match, return error response
         res.status(401).json({ error: 'Invalid username or password' });
       }
->>>>>>> Stashed changes
     } else {
       // No user found with provided username, return error response
       res.status(401).json({ error: 'Invalid username or password' });
