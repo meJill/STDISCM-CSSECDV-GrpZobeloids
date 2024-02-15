@@ -23,6 +23,12 @@ function LoginPage() {
         setError('Please complete the CAPTCHA.');
         return;
       }
+      const response = await axios.post("http://localhost:5000/login", {
+        username,
+        password,
+      });
+      setError("");
+      console.log("Login successful:", response.data);
       
       // Your login logic
     } catch (error) {
