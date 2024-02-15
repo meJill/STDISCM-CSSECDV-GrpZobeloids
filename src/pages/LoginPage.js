@@ -4,7 +4,7 @@ import ReCAPTCHA from 'react-google-recaptcha'; // Import ReCAPTCHA
 import classes from './LoginPage.module.css';
 import Card from '../components/ui/Card';
 import axios from 'axios';
-import config from '../config.js' 
+import config from '../config';
 
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
