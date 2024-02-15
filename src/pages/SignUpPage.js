@@ -73,17 +73,17 @@ function SignUpPage() {
                 <div className={classes.control}>
                     <label htmlFor="photo">Profile Photo</label>
                     <input id="photo" 
-                        type="file"
+                        type="url"
                         value={photo} 
                         onChange={(e) => setPhoto(e.target.value)} 
-                        required
+                        
                     />
                 </div>
+
+                
                 {error && <p className={classes.error}>{error}</p>}
                 <div className ={classes.actions}>
                     <button className = {classes.signup}> Sign Up </button>
-                    
-                
                 </div>
                 </form>
             </Card>
