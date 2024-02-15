@@ -19,7 +19,7 @@ module.exports = {
 6. create another config.js file in the src folder and set the google_site_key there
 follow this format:
 module.exports = {
-    google_site_key: '6Lcpx3MpAAAAAABYyHLYpaKknNPuaHoETc8GuyuU'
+    google_site_key: 'key'
 };
 7. use npm run server to run the server
 8. use npm start to run the react app
