@@ -4,7 +4,7 @@ import ReCAPTCHA from 'react-google-recaptcha'; // Import ReCAPTCHA
 import classes from './LoginPage.module.css';
 import Card from '../components/ui/Card';
 import axios from 'axios';
-import config from '../config.js' 
+import config from '../config';
 
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
@@ -18,7 +18,12 @@ function LoginPage() {
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      // Your login logic
+      const response = await axios.post("http://localhost:5000/login", {
+        username,
+        password,
+      });
+      setError("");
+      console.log("Login successful:", response.data);
     } catch (error) {
       setError('Invalid username or password');
       console.error('Login failed:', error);
