@@ -14,10 +14,16 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [captchaCompleted, setCaptchaCompleted] = useState(false);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
+      if (!captchaCompleted) {
+        setError('Please complete the CAPTCHA.');
+        return;
+      }
+      
       // Your login logic
     } catch (error) {
       setError('Invalid username or password');
@@ -28,6 +34,12 @@ function LoginPage() {
   const navigate = useNavigate();
   const navSignUp = () => {
     navigate('/signup-page');
+  };
+
+  const handleCaptchaChange = (value) => {
+    if (value) {
+      setCaptchaCompleted(true);
+    }
   };
 
   return (
@@ -57,12 +69,12 @@ function LoginPage() {
           </div>
           {error && <p className={classes.error}>{error}</p>}
           {/* Add ReCAPTCHA component */}
-          <ReCAPTCHA sitekey= {config.google_site_key} />
+          <ReCAPTCHA sitekey={config.google_site_key} onChange={handleCaptchaChange} />
           <div className={classes.actions}>
             <button className={classes.signup} onClick={navSignUp}>
               Register
             </button>
-            <button type="submit" className={classes.login}>
+            <button type="submit" className={classes.login} disabled={!captchaCompleted}>
               Login
             </button>
           </div>
