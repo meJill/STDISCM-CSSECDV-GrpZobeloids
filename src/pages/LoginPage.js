@@ -5,7 +5,6 @@ import classes from './LoginPage.module.css';
 import Card from '../components/ui/Card';
 import axios from 'axios';
 import config from '../config';
-import { v4 as uuidv4 } from 'uuid'; //for Session Token ID Generation
 
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
@@ -38,20 +37,6 @@ function LoginPage() {
     }
   };
 
-  const express = require('express');
-  const session = require('express-session');
-  const app = express();
-  const uuid = uuidv4();
-
-console.log('Random UUID:', uuid);
-
-  app.use(
-    session({
-      name: 'session',
-      secret: uuid,
-      expires: new Date(Date.now() + 1 * 60 * 60 * 1000), // 1 hour
-    })
-  );
 
   const navigate = useNavigate();
   const navSignUp = () => {
