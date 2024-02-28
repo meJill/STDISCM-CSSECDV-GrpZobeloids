@@ -1,4 +1,5 @@
 import DataList from "../components/actions/CharItemList"
+import useAuth from '../hooks/useAuth';
 
 const Dummy_Data =[{
     id: 'data1',
@@ -9,10 +10,16 @@ const Dummy_Data =[{
 
 
 function HomePage(){
+    const authenticated = useAuth();
     return (
     <div className = "home-page">
         <h1> Home </h1>
         <DataList chars ={Dummy_Data}/>
+        {authenticated ? (
+            <p>User is authenticated.</p>
+            ) : (
+            <p>User is not authenticated.</p>
+        )}
     </div>
   
 );

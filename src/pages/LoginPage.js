@@ -5,6 +5,7 @@ import classes from './LoginPage.module.css';
 import Card from '../components/ui/Card';
 import axios from 'axios';
 import config from '../config';
+import AuthService from '../services/AuthService';
 
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
@@ -30,6 +31,13 @@ function LoginPage() {
       setError("");
       console.log("Login successful:", response.data);
       
+      const now = new Date();
+      const expirationTime = now.getTime() + 10 * 1000; // 1 hour expiry time
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('username', username);
+      localStorage.setItem('expirationTime', expirationTime.toString());
+
+
       // Your login logic
     } catch (error) {
       setError('Invalid username or password');
