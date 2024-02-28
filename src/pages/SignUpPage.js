@@ -10,12 +10,14 @@ function SignUpPage() {
     const [pnumber, setPnumber] = useState('');
     const [photo, setPhoto] = useState('');
     const [error, setError] = useState('');
+    const [signupSuccess, setSignupSuccess] = useState(false); // New state variable
 
     const handleSignup = async (event) => {
         event.preventDefault();
         try {
             const response = await axios.post('http://localhost:5000/register', { username, password, email, pnumber, photo });
             setError('')
+            setSignupSuccess(true); // Set signup success
           console.log('Signup successful:', response.data);
         } catch (error) {
             console.error('Signup failed:', error);
@@ -82,6 +84,7 @@ function SignUpPage() {
 
                 
                 {error && <p className={classes.error}>{error}</p>}
+                {signupSuccess && <p className={classes.success}>Signup successful</p>}
                 <div className ={classes.actions}>
                     <button className = {classes.signup}> Sign Up </button>
                 </div>
