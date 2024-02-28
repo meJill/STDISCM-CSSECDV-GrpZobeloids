@@ -15,6 +15,9 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [captchaCompleted, setCaptchaCompleted] = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -29,6 +32,26 @@ function LoginPage() {
       });
       setError("");
       console.log("Login successful:", response.data);
+
+
+
+      // Check if profile photo data exists in the response
+      if (response.status === 200) {
+        const { profile_photo } = response.data;
+        console.log("Type of profile photo data:", typeof response.data.profile_photo);
+        console.log("Constructor of profile photo data:", response.data.profile_photo.constructor);
+
+        if (profile_photo) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setProfilePhoto(reader.result);
+          };
+          reader.readAsDataURL(new Blob([profile_photo]));
+        }
+      }
+
+      // Update login status
+      setIsLoggedIn(true);
       
       // Your login logic
     } catch (error) {
@@ -52,6 +75,9 @@ function LoginPage() {
     <div className={classes.LoginContainer}>
       <h1>LOGIN</h1>
       <Card>
+        {/* Conditionally render profile photo only when logged in */}
+        {isLoggedIn && profilePhoto && <img src={profilePhoto} alt="Profile" className={classes.profilePhoto} />}
+        {/* End of profile photo display */}
         <form className={classes.form} onSubmit={handleLogin}>
           <div className={classes.control}>
             <label htmlFor="uname">Username</label>

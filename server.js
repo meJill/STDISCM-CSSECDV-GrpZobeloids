@@ -15,8 +15,10 @@ const bcrypt = require('bcrypt');
 
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
-const db = mysql.createConnection(config.database);
-app.use(cors());
+const db = mysql.createConnection({
+  ...config.database,
+  maxAllowedPacket: 1024 * 1024 * 50 // 50MB (example value, adjust as needed)
+});app.use(cors());
 
 // Connect to MySQL
 db.connect((err) => {
@@ -27,10 +29,12 @@ db.connect((err) => {
   
 });
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '50mb' }));
+
+
 
 app.post('/register', upload.single('file'), async (req, res) => {
-  const { username, password, email, pnumber, photo} = req.body;
+  const { username, password, email, pnumber, photo } = req.body;
 
   try {
     var regex = new RegExp("^(?=(?=.*[A-Z]).{1}(?=.*[a-z]).{1}(?=.*[0-9]).{1}(?=.*[^A-Za-z0-9]).{1})([^;]){12,64}$");
@@ -69,11 +73,12 @@ app.post('/register', upload.single('file'), async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the new user into the database with the hashed password
+    // Insert the new user into the database with the hashed password and photo data
     await db.promise().query(
       'INSERT INTO users (username, password, email, phone_no, profile_photo) VALUES (?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, pnumber, photo]
-    );
+      [username, hashedPassword, email, pnumber, photo] // Convert base64 data to Buffer
+  );
+
 res.status(201).json({ message: 'User registered successfully' });
 } catch (error) {
 console.error('Error registering user:', error);

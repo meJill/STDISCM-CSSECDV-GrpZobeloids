@@ -16,15 +16,27 @@ function SignUpPage() {
         event.preventDefault();
         try {
             const response = await axios.post('http://localhost:5000/register', { username, password, email, pnumber, photo });
-            setError('')
-            setSignupSuccess(true); // Set signup success
-          console.log('Signup successful:', response.data);
+            setError('');
+            setSignupSuccess(true);
+            console.log('Signup successful:', response.data);
         } catch (error) {
             console.error('Signup failed:', error);
             setError(error.response.data.error);
+            setSignupSuccess(false); // Reset signupSuccess to false if error occurs
         }
     };
 
+    const handleFileInputChange = (e) => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onloadend = () => {
+            // Convert the file data to base64 encoding
+            setPhoto(reader.result);
+        };
+
+        reader.readAsDataURL(file);
+    };
 
     return(
       
@@ -73,14 +85,15 @@ function SignUpPage() {
                 </div>
 
                 <div className={classes.control}>
-                    <label htmlFor="photo">Profile Photo</label>
-                    <input id="photo" 
-                        type="url"
-                        value={photo} 
-                        onChange={(e) => setPhoto(e.target.value)} 
-                        
-                    />
-                </div>
+                        <label htmlFor="photo">Profile Photo</label>
+                        <input
+                            id="photo"
+                            type="file" // Change input type to file
+                            accept=".jpg, .jpeg, .png" // Specify accepted file types
+                            onChange={handleFileInputChange} // Handle file input change
+                            required
+                        />
+                    </div>
 
                 
                 {error && <p className={classes.error}>{error}</p>}
