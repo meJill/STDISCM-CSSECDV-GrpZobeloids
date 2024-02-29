@@ -6,8 +6,14 @@ function useAuth() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setAuthenticated(AuthService.isAuthenticated());
-    }, 1000); // Check authentication status every second
+      const expired = AuthService.isSessionExpired();
+      if (expired) {
+        AuthService.logout(); // Logout if session is expired
+        setAuthenticated(false); // Update authentication state
+      } else {
+        setAuthenticated(AuthService.isAuthenticated());
+      }
+    }, 1000); // Check authentication status and session expiry every second
 
     return () => clearInterval(intervalId); // Clean up the interval on unmount
   }, []);

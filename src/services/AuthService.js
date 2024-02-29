@@ -9,10 +9,13 @@ class AuthService {
         const now = new Date().getTime();
         return now < parseInt(expirationTime, 10);
       }
+      
+      isSessionExpired() {
+        const expirationTime = localStorage.getItem('expirationTime');
+        if (!expirationTime) return true;
     
-      // Method to get username from session
-      getUsername() {
-        return localStorage.getItem('username');
+        const now = new Date().getTime();
+        return now >= parseInt(expirationTime, 10);
       }
     
       // Method to handle logout
