@@ -8,10 +8,12 @@ const config = require('./config');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
-const upload = multer({ dest: '/path/to/temporary/directory' });
+const upload = multer({ dest: 'uploads/' }); // Destination folder for uploaded files
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
+
+
 
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
@@ -66,7 +68,7 @@ db.connect(async (err) => {
       console.log('Database does not exist. Creating...');
       createDatabase();
     } else {
-      console.log('Database already exists');
+      console.log('Database already exists, no need to create');
     }
   } catch (error) {
     console.error('Error checking or creating database:', error);
@@ -76,8 +78,30 @@ db.connect(async (err) => {
 
 app.use(bodyParser.json());
 
-app.post('/register', upload.single('file'), async (req, res) => {
-  const { username, password, email, pnumber, photo} = req.body;
+app.post('/register', upload.single('photo'), async (req, res) => {
+  const { username, password, email, pnumber } = req.body;
+
+  // Get the uploaded file details
+  const photoFile = req.file;
+  const photoFileName = photoFile.filename; // This will give you the filename of the uploaded photo
+  const photoFilePath = photoFile.path; // This will give you the path of the uploaded photo
+
+  // Determine the appropriate file extension based on the MIME type of the uploaded file
+  const fileExtension = path.extname(photoFile.originalname).toLowerCase(); // Get the file extension
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']; // Supported image file extensions
+
+
+  // Check if the uploaded file has a supported image file extension
+  if (!imageExtensions.includes(fileExtension)) {
+    // Handle unsupported file types here
+    return res.status(400).json({ error: 'Unsupported file type' });
+  }
+
+  // Construct the new file path with the appropriate image file extension
+  const newPhotoFilePath = photoFilePath + fileExtension;
+
+  // Rename the uploaded file with the appropriate image file extension
+  fs.renameSync(photoFilePath, newPhotoFilePath);
 
   try {
     var regex = new RegExp("^(?=(?=.*[A-Z]).{1}(?=.*[a-z]).{1}(?=.*[0-9]).{1}(?=.*[^A-Za-z0-9]).{1})([^;]){12,64}$");
@@ -116,13 +140,14 @@ app.post('/register', upload.single('file'), async (req, res) => {
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert the new user into the database with the hashed password
+    // Insert the new user into the database with the hashed password and uploaded photo filename
     await db.promise().query(
-      'INSERT INTO users (username, password, email, phone_no, profile_photo) VALUES (?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, pnumber, photo]
+      'INSERT INTO users (username, password, email, phone_no, profile_photo_path) VALUES (?, ?, ?, ?, ?)',
+      [username, hashedPassword, email, pnumber, newPhotoFilePath]
     );
-res.status(201).json({ message: 'User registered successfully' });
-} catch (error) {
+    const photoUrl = `${newPhotoFilePath}`;
+    res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
+  } catch (error) {
 console.error('Error registering user:', error);
 res.status(500).json({ error: 'Internal server error' });
 }

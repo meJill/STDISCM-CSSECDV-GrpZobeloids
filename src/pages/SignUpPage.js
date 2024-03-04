@@ -10,21 +10,53 @@ function SignUpPage() {
     const [pnumber, setPnumber] = useState('');
     const [photo, setPhoto] = useState('');
     const [error, setError] = useState('');
-    const [signupSuccess, setSignupSuccess] = useState(false); // New state variable
+    const [signupSuccess, setSignupSuccess] = useState(false);
+    const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
+
 
     const handleSignup = async (event) => {
         event.preventDefault();
+    
         try {
-            const response = await axios.post('http://localhost:5000/register', { username, password, email, pnumber, photo });
-            setError('')
-            setSignupSuccess(true); // Set signup success
-          console.log('Signup successful:', response.data);
+            // Create FormData object and append form data
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            formData.append('email', email);
+            formData.append('pnumber', pnumber);
+            formData.append('photo', photo); // Append photo file
+    
+            // Send POST request with form data to /register endpoint
+            const response = await axios.post('http://localhost:5000/register', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+    
+            // Reset error and set signup success
+            setError('');
+            setSignupSuccess(true);
+            setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
+            console.log('Signup successful:', response.data);
+
+
+            console.log('Photo before upload:', photo);
+
+
+            console.log('Photo uploaded successfully');
+
+        
         } catch (error) {
             console.error('Signup failed:', error);
             setError(error.response.data.error);
         }
     };
-
+    const handlePhotoChange = (event) => {
+        // Update state with the selected file
+        setPhoto(event.target.files[0]);
+        
+        console.log('Photo before upload:', event.target.files[0]);
+      };
 
     return(
       
@@ -73,14 +105,15 @@ function SignUpPage() {
                 </div>
 
                 <div className={classes.control}>
-                    <label htmlFor="photo">Profile Photo</label>
-                    <input id="photo" 
-                        type="url"
-                        value={photo} 
-                        onChange={(e) => setPhoto(e.target.value)} 
-                        
-                    />
-                </div>
+            <label htmlFor="photo">Profile Photo</label>
+            <input
+              id="photo"
+              type="file" // Change type to "file"
+              onChange={handlePhotoChange} // Add onChange event handler
+              accept="image/*" // Add accept attribute to accept only image files
+              required
+            />
+          </div>
 
                 
                 {error && <p className={classes.error}>{error}</p>}
@@ -89,6 +122,16 @@ function SignUpPage() {
                     <button className = {classes.signup}> Sign Up </button>
                 </div>
                 </form>
+           {/* Display uploaded image if registration was successful */}
+           {signupSuccess && (
+                <div>
+                    <p>Profile Photo:</p>
+                    <img src={profilePhotoUrl} alt="Profile" />
+                </div>
+            )}
+
+            {/* Error message */}
+            {error && <p>{error}</p>}
             </Card>
        </div>
       
