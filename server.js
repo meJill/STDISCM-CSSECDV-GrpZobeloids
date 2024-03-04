@@ -23,11 +23,38 @@ app.use(cors());
 // Function to check if the database exists
 const checkDatabaseExists = () => {
   return new Promise((resolve, reject) => {
-    db.query('SHOW DATABASES LIKE ?', [config.database.database], (err, results) => {
+    db.query('SHOW DATABASES LIKE ?', [config.database.database], async (err, results) => {
       if (err) {
         reject(err);
       } else {
-        resolve(results.length > 0);
+        if (results.length > 0) {
+          try {
+            // Check if the necessary tables exist in the database
+            const tablesExist = await checkTablesExist();
+            resolve(tablesExist);
+          } catch (error) {
+            reject(error);
+          }
+        } else {
+          resolve(false); // Database does not exist
+        }
+    });
+  });
+};
+
+const checkTablesExist = () => {
+  return new Promise((resolve, reject) => {
+    db.query('SHOW TABLES', (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        // Extract table names from the results
+        const tables = results.map((row) => Object.values(row)[0]);
+        const requiredTables = ['users', 'admin']; // Modify this array with the required table names
+
+        // Check if all required tables exist
+        const allTablesExist = requiredTables.every((table) => tables.includes(table));
+        resolve(allTablesExist);
       }
     });
   });
