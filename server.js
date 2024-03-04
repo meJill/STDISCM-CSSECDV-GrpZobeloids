@@ -14,12 +14,6 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 
 
-
-// MySQL database connection configuration
-// DEV NOTE: Set this up in the config.js file because security and all that jazz
-const db = mysql.createConnection(config.database);
-app.use(cors());
-
 // Function to check if the database exists
 const checkDatabaseExists = () => {
   return new Promise((resolve, reject) => {
@@ -38,6 +32,7 @@ const checkDatabaseExists = () => {
         } else {
           resolve(false); // Database does not exist
         }
+      }
     });
   });
 };
@@ -59,6 +54,13 @@ const checkTablesExist = () => {
     });
   });
 };
+
+// MySQL database connection configuration
+// DEV NOTE: Set this up in the config.js file because security and all that jazz
+const db = mysql.createConnection(config.database);
+app.use(cors());
+
+
 
 // Function to create the database using SQL script file
 const createDatabase = () => {
