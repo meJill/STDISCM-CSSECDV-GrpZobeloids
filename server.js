@@ -18,14 +18,61 @@ const bcrypt = require('bcrypt');
 const db = mysql.createConnection(config.database);
 app.use(cors());
 
-// Connect to MySQL
-db.connect((err) => {
+// Function to check if the database exists
+const checkDatabaseExists = () => {
+  return new Promise((resolve, reject) => {
+    db.query('SHOW DATABASES LIKE ?', [config.database.database], (err, results) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(results.length > 0);
+      }
+    });
+  });
+};
+
+// Function to create the database using SQL script file
+const createDatabase = () => {
+  const sqlFilePath = `${__dirname}/schema.sql`; // Update this with your SQL script file path
+
+  fs.readFile(sqlFilePath, 'utf8', (err, sqlScript) => {
+    if (err) {
+      throw err;
+    }
+
+    // Execute the SQL script to create the database
+    db.query(sqlScript, (err) => {
+      if (err) {
+        throw err;
+      }
+
+      console.log('Database created successfully');
+    });
+  });
+};
+
+// Connect to MySQL and create database if not exists
+db.connect(async (err) => {
   if (err) {
     throw err;
   }
-  console.log('Connected to MySQL database');
-  
+
+  console.log('Connected to MySQL Database');
+
+  try {
+    const databaseExists = await checkDatabaseExists();
+
+    if (!databaseExists) {
+      console.log('Database does not exist. Creating...');
+      createDatabase();
+    } else {
+      console.log('Database already exists');
+    }
+  } catch (error) {
+    console.error('Error checking or creating database:', error);
+  }
 });
+
 
 app.use(bodyParser.json());
 
