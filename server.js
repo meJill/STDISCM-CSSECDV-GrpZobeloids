@@ -137,10 +137,13 @@ app.post('/register', upload.single('photo'), async (req, res) => {
     console.log([password])
     if (!regex.test(password)) {
       if (password.length < 12) {
+        fs.unlinkSync(newPhotoFilePath);
         return res.status(403).json({error: 'Password too short'})
       } else if (password.length > 64 ){
+        fs.unlinkSync(newPhotoFilePath);
         return res.status(403).json({error: 'Password too long'})
       } else {
+        fs.unlinkSync(newPhotoFilePath);
         return res.status(403).json({error: 'Invalid Password'})
       }
     } 
@@ -148,11 +151,13 @@ app.post('/register', upload.single('photo'), async (req, res) => {
 
     var regex1 = new RegExp("^[0-9a-zA-Z]*([\_\.\-][0-9a-zA-Z]+)*\@[0-9a-zA-Z]*\.[a-zA-Z]{2,}$"); 
     if (!regex1.test(email)) {
+      fs.unlinkSync(newPhotoFilePath);
       return res.status(400).json({error: 'Invalid email format'})
     }
 
     var regex2 = new RegExp("^[0-9]{11,12}$");
     if (!regex2.test(pnumber)) {
+      fs.unlinkSync(newPhotoFilePath);
       return res.status(401).json({error: 'Invalid phone number format'})
     }
 
@@ -163,6 +168,7 @@ app.post('/register', upload.single('photo'), async (req, res) => {
     );
 
     if (existingUser.length > 0) {
+      fs.unlinkSync(newPhotoFilePath);
       return res.status(402).json({ error: 'Username already exists' });
     }
 

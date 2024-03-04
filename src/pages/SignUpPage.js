@@ -49,6 +49,7 @@ function SignUpPage() {
         } catch (error) {
             console.error('Signup failed:', error);
             setError(error.response.data.error);
+            setSignupSuccess(false); // Set signup success to false if there is an error
         }
     };
     const handlePhotoChange = (event) => {
@@ -115,15 +116,15 @@ function SignUpPage() {
             />
           </div>
 
-                
+                {/* Display error message */}
                 {error && <p className={classes.error}>{error}</p>}
-                {signupSuccess && <p className={classes.success}>Signup successful</p>}
+                {signupSuccess && !error && <p className={classes.success}>Signup successful</p>}
                 <div className ={classes.actions}>
                     <button className = {classes.signup}> Sign Up </button>
                 </div>
                 </form>
            {/* Display uploaded image if registration was successful */}
-           {signupSuccess && (
+           {signupSuccess && !error && (
                 <div>
                     <p>Profile Photo:</p>
                     <img src={profilePhotoUrl} alt="Profile" />
@@ -131,7 +132,7 @@ function SignUpPage() {
             )}
 
             {/* Error message */}
-            {error && <p>{error}</p>}
+            {error &&  <p>{error}</p>}
             </Card>
        </div>
       
