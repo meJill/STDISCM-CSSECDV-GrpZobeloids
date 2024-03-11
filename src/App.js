@@ -9,6 +9,8 @@ import Layout from "./components/layout/Layout";
 
 import AddCharacterForm from "./components/actions/AddCharacterForm";
 import SignUpPage from "./pages/SignUpPage";
+import AdminPage from "./pages/AdminPage";
+import AdminLogin from "./pages/AdminLoginPage";
 
 function App() {
   return (
@@ -21,6 +23,9 @@ function App() {
           <Route path="/add-page" element={<AddPage />} />
           <Route path="/login-page" element={<LoginPage />} />
           <Route path="/signup-page" element={<SignUpPage />} />
+          <Route path="/admin-login-page" element={<AdminLogin />} />
+          <Route path="/admin-page" element={<AdminPage />} />
+
         </Routes>
       
       </div>
