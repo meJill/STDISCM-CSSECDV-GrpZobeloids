@@ -1,0 +1,13 @@
+table, th, td {
+    border: .3vh solid;
+    border-color: #DFE1E3;
+}
+
+table{
+
+    width: 100%;
+}
+
+.tableContainer{
+    width: 100%;
+}

@@ -1,0 +1,28 @@
+.container{
+    margin-top: 5vh;
+}
+.userCard{
+    padding: 2%;
+}
+.actions button:hover,
+.actions button:active {
+  background-color: #ffffff;
+  color: black;
+}
+
+.actions button {
+    font: inherit;
+    cursor: pointer;
+    background-color: #21262D;
+    color: rgb(255, 255, 255);
+    padding: 0.5rem 1.5rem;
+    border-color: #2D3137;
+    border-radius: 12px;
+    border-width: thick solid;
+    margin: auto;
+
+  }
+
+  .actions{
+    padding-bottom: 5%;
+ }

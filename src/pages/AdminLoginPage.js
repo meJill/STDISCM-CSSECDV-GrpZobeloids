@@ -8,8 +8,8 @@ import config from '../config';
 import AuthService from '../services/AuthService';
 
 function AdminLogin() {
-  const [adminUser, setUsername] = useState('');
-  const [adminPassword, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [captchaCompleted, setCaptchaCompleted] = useState(false);
 
@@ -21,8 +21,8 @@ function AdminLogin() {
         return;
       }
       const response = await axios.post("http://localhost:5000/adminlogin", {
-        adminUser,
-        adminPassword,
+        username,
+        password,
       });
       setError("");
       console.log("Login successful:", response.data);
@@ -30,10 +30,10 @@ function AdminLogin() {
       const now = new Date();
       const expirationTime = now.getTime() + 20 * 1000; // 1 hour expiry time
       localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', adminUser);
+      localStorage.setItem('username', username);
       localStorage.setItem('expirationTime', expirationTime.toString());
 
-      navigate('/');
+      navigate('/admin-page');
 
 
       // Your login logic
@@ -44,9 +44,9 @@ function AdminLogin() {
   };
 
   const navigate = useNavigate();
-  const navSignUp = () => {
-    navigate('/signup-page');
-  };
+//   const navSignUp = () => {
+//     navigate('/signup-page');
+//   };
 
   const handleCaptchaChange = (value) => {
     if (value) {
@@ -64,7 +64,7 @@ function AdminLogin() {
             <input
               type="text"
               id="username"
-              value={adminUser}
+              value={username}
               onChange={(e) => setUsername(e.target.value)}
               required
             />
@@ -74,7 +74,7 @@ function AdminLogin() {
             <input
               type="password"
               id="password"
-              value={adminPassword}
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
             />
@@ -85,9 +85,9 @@ function AdminLogin() {
           <ReCAPTCHA sitekey={config.google_site_key} onChange={handleCaptchaChange} />
           </div>
           <div className={classes.actions}>
-            <button className={classes.signup} onClick={navSignUp}>
+            {/* <button className={classes.signup} onClick={navSignUp}>
               Register
-            </button>
+            </button> */}
             <button type="submit" className={classes.login} disabled={!captchaCompleted}>
               Login
             </button>
