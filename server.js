@@ -8,7 +8,7 @@ const config = require('./config');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Destination folder for uploaded files
+const upload = multer({ dest: 'src/images/' }); // Destination folder for uploaded files
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
@@ -186,6 +186,22 @@ app.post('/register', upload.single('photo'), async (req, res) => {
 console.error('Error registering user:', error);
 res.status(500).json({ error: 'Internal server error' });
 }
+});
+
+app.post('/loggedIn', async (req, res) => {
+  const {username} = req.body
+  console.log(req.body)
+  console.log({username})
+  try {
+    const [user] = await db.promise().query('SELECT profile_photo_path FROM users WHERE username = ?', [username]);
+    console.log(user[0])
+    res.status(200).json({profile_photo: user[0]})
+  } catch (error) {
+    
+  }
+  
+
+  
 });
 
 app.post('/login', async (req, res) => {
