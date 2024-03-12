@@ -128,7 +128,7 @@ app.post('/register', upload.single('photo'), async (req, res) => {
 
   // Construct the new file path with the appropriate image file extension
   const newPhotoFileName = originalFileName; // Keep original filename
-  const newPhotoFilePath = path.join(__dirname, 'uploads', newPhotoFileName);
+  const newPhotoFilePath = path.join('uploads', newPhotoFileName); // Remove __dirname
 
   // Rename the uploaded file with the appropriate image file extension
   fs.renameSync(photoFilePath, newPhotoFilePath);
