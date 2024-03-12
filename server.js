@@ -112,22 +112,23 @@ app.post('/register', upload.single('photo'), async (req, res) => {
 
   // Get the uploaded file details
   const photoFile = req.file;
-  const photoFileName = photoFile.filename; // This will give you the filename of the uploaded photo
+  const originalFileName = photoFile.originalname; // Original filename of the uploaded photo
   const photoFilePath = photoFile.path; // This will give you the path of the uploaded photo
 
   // Determine the appropriate file extension based on the MIME type of the uploaded file
   const fileExtension = path.extname(photoFile.originalname).toLowerCase(); // Get the file extension
   const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']; // Supported image file extensions
 
-
   // Check if the uploaded file has a supported image file extension
   if (!imageExtensions.includes(fileExtension)) {
     // Handle unsupported file types here
+    fs.unlinkSync(photoFilePath);
     return res.status(400).json({ error: 'Unsupported file type' });
   }
 
   // Construct the new file path with the appropriate image file extension
-  const newPhotoFilePath = photoFilePath + fileExtension;
+  const newPhotoFileName = originalFileName; // Keep original filename
+  const newPhotoFilePath = path.join(__dirname, 'uploads', newPhotoFileName);
 
   // Rename the uploaded file with the appropriate image file extension
   fs.renameSync(photoFilePath, newPhotoFilePath);
@@ -180,8 +181,7 @@ app.post('/register', upload.single('photo'), async (req, res) => {
       'INSERT INTO users (username, password, email, phone_no, profile_photo_path) VALUES (?, ?, ?, ?, ?)',
       [username, hashedPassword, email, pnumber, newPhotoFilePath]
     );
-    const photoUrl = `${newPhotoFilePath}`;
-    res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
+    res.status(201).json({ message: 'User registered successfully'});
   } catch (error) {
 console.error('Error registering user:', error);
 res.status(500).json({ error: 'Internal server error' });
