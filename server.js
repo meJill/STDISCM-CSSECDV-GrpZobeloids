@@ -1,111 +1,33 @@
 // server.js
 
 const express = require('express');
-const mysql = require('mysql2');
-
-const app = express();
-const config = require('./config');
 const bodyParser = require('body-parser');
-const fs = require('fs');
 const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Destination folder for uploaded files
+const upload = multer({ dest: 'uploads/' });
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const fs = require('fs'); // Add this line
 
 
-// Function to check if the database exists
-const checkDatabaseExists = () => {
-  return new Promise((resolve, reject) => {
-    db.query('SHOW DATABASES LIKE ?', [config.database.database], async (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        if (results.length > 0) {
-          try {
-            // Check if the necessary tables exist in the database
-            const tablesExist = await checkTablesExist();
-            resolve(tablesExist);
-          } catch (error) {
-            reject(error);
-          }
-        } else {
-          resolve(false); // Database does not exist
-        }
-      }
-    });
-  });
-};
-
-const checkTablesExist = () => {
-  return new Promise((resolve, reject) => {
-    db.query('SHOW TABLES', (err, results) => {
-      if (err) {
-        reject(err);
-      } else {
-        // Extract table names from the results
-        const tables = results.map((row) => Object.values(row)[0]);
-        const requiredTables = ['users', 'admin']; // Modify this array with the required table names
-
-        // Check if all required tables exist
-        const allTablesExist = requiredTables.every((table) => tables.includes(table));
-        resolve(allTablesExist);
-      }
-    });
-  });
-};
-
-// MySQL database connection configuration
-// DEV NOTE: Set this up in the config.js file because security and all that jazz
-const db = mysql.createConnection(config.database);
-app.use(cors());
+const config = require('./config');
+const { Sequelize } = require('sequelize');
+const { Admin, Users } = require('./models');
 
 
-
-// Function to create the database using SQL script file
-const createDatabase = () => {
-  const sqlFilePath = `${__dirname}/schema.sql`; // Update this with your SQL script file path
-
-  fs.readFile(sqlFilePath, 'utf8', (err, sqlScript) => {
-    if (err) {
-      throw err;
-    }
-
-    // Execute the SQL script to create the database
-    db.query(sqlScript, (err) => {
-      if (err) {
-        throw err;
-      }
-
-      console.log('Database created successfully');
-    });
-  });
-};
-
-// Connect to MySQL and create database if not exists
-db.connect(async (err) => {
-  if (err) {
-    throw err;
-  }
-
-  console.log('Connected to MySQL Database');
-
-  try {
-    const databaseExists = await checkDatabaseExists();
-
-    if (!databaseExists) {
-      console.log('Database does not exist. Creating...');
-      createDatabase();
-    } else {
-      console.log('Database already exists, no need to create');
-    }
-  } catch (error) {
-    console.error('Error checking or creating database:', error);
-  }
+const sequelize = new Sequelize(config.database.database, config.database.user, config.database.password, {
+  host: config.database.host,
+  dialect: 'mysql',
 });
 
 
+// MySQL database connection configuration
+// DEV NOTE: Set this up in the config.js file because security and all that jazz
+const app = express();
+app.use(cors());
 app.use(bodyParser.json());
+
+
 
 app.post('/register', upload.single('photo'), async (req, res) => {
   const { username, password, email, pnumber } = req.body;
@@ -163,24 +85,26 @@ app.post('/register', upload.single('photo'), async (req, res) => {
     }
 
     // Check if the username already exists
-    const [existingUser] = await db.promise().query(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
-
-    if (existingUser.length > 0) {
+    const existingUser = await Users.findOne({ where: { username } });
+    if (existingUser) {
       fs.unlinkSync(newPhotoFilePath);
       return res.status(402).json({ error: 'Username already exists' });
     }
+
+
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the new user into the database with the hashed password and uploaded photo filename
-    await db.promise().query(
-      'INSERT INTO users (username, password, email, phone_no, profile_photo_path) VALUES (?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, pnumber, newPhotoFilePath]
-    );
+    const newUser = await Users.create({
+      username,
+      password: hashedPassword,
+      email,
+      phone_no: pnumber,
+      profile_photo_path: newPhotoFilePath
+    });
+
     res.status(201).json({ message: 'User registered successfully'});
   } catch (error) {
 console.error('Error registering user:', error);
@@ -192,17 +116,16 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Fetch user from the database
-    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+    // Find the user in the database
+    const user = await Users.findOne({ where: { username } });
 
-    if (user.length === 1) {
+    if (user) {
       // User exists, compare passwords
-      const hashedPassword = user[0].password;
-      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (passwordMatch) {
         // Passwords match, return success response
-        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo });
+        res.status(200).json({ message: 'Login successful', profile_photo: user.profile_photo_path });
       } else {
         // Passwords do not match, return error response
         res.status(401).json({ error: 'Invalid username or password' });
@@ -216,7 +139,6 @@ app.post('/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 // Define routes for CRUD operations
 app.get('/api/data', (req, res) => {
@@ -234,3 +156,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 }); 
+
+module.exports = { sequelize };
