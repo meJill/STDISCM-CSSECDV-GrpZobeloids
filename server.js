@@ -8,13 +8,18 @@ const config = require('./config');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
+<<<<<<< Updated upstream
 const upload = multer({ dest: '/path/to/temporary/directory' });
+=======
+const upload = multer({ dest: './src/images' });
+>>>>>>> Stashed changes
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
 
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
+<<<<<<< Updated upstream
 const db = mysql.createConnection({
   ...config.database,
   maxAllowedPacket: 1024 * 1024 * 50 // 50MB (example value, adjust as needed)
@@ -24,12 +29,43 @@ const db = mysql.createConnection({
 db.connect((err) => {
   if (err) {
     throw err;
+=======
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+app.use('/images', express.static(path.join(__dirname, 'images')));
+
+
+app.post('/register', upload.single('photo'), async (req, res) => {
+  const { username, password, email, pnumber } = req.body;
+
+  // Get the uploaded file details
+  const photoFile = req.file;
+  const originalFileName = photoFile.originalname; // Original filename of the uploaded photo
+  const photoFilePath = photoFile.path; // This will give you the path of the uploaded photo
+
+  // Determine the appropriate file extension based on the MIME type of the uploaded file
+  const fileExtension = path.extname(photoFile.originalname).toLowerCase(); // Get the file extension
+  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif']; // Supported image file extensions
+
+  // Check if the uploaded file has a supported image file extension
+  if (!imageExtensions.includes(fileExtension)) {
+    // Handle unsupported file types here
+    fs.unlinkSync(photoFilePath);
+    return res.status(400).json({ error: 'Unsupported file type' });
+>>>>>>> Stashed changes
   }
   console.log('Connected to MySQL database');
   
 });
 
+<<<<<<< Updated upstream
 app.use(bodyParser.json({ limit: '50mb' }));
+=======
+  // Construct the new file path with the appropriate image file extension
+  const newPhotoFileName = originalFileName; // Keep original filename
+  const newPhotoFilePath = originalFileName; // Remove __dirname
+>>>>>>> Stashed changes
 
 
 
