@@ -23,8 +23,9 @@ function HomePage(){
                 username
             });
             console.log(response.data.profile_photo.profile_photo_path)
-            setProfilePhotoUrl('../'+(response.data.profile_photo.profile_photo_path).slice(4).replace("\\", "/"))
-            console.log(profilePhotoUrl)
+            let path = require('../'+(response.data.profile_photo.profile_photo_path).slice(4).replace("\\", "/"))
+            setProfilePhotoUrl(path)
+            console.log("test " + profilePhotoUrl)
         } catch (error) {
 
         }
@@ -34,11 +35,12 @@ function HomePage(){
     <div className = "home-page" onLoad={isLoggedIn}>
         <h1> Home </h1>
         <DataList chars ={Dummy_Data}/>
-        <h1>{profilePhotoUrl}</h1>
+        {/* <h1>{profilePhotoUrl}</h1> */}
         {authenticated && (
             <div>
-                <img src={require(profilePhotoUrl)}/>
-                <img src={require('../images/db38a6120e0904ad3e387d2f2b96dbd0.png')}/>
+                <img src={profilePhotoUrl}/>
+                {/* {console.log("ingame" + profilePhotoUrl)} */}
+                {/* <img src={require('../images/db38a6120e0904ad3e387d2f2b96dbd0.png')}/> */}
 
             </div>  
         )}
