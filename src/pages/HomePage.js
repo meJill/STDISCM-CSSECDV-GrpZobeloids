@@ -43,7 +43,6 @@ function HomePage(){
     <div className = "home-page" onLoad={IsLoggedIn}>
         <h1> Home </h1>
         <DataList chars ={Dummy_Data}/>
-        <h1>{profilePhotoUrl}</h1>
         {authenticated  &&
             <div>
                 <img src={require(`../${profilePhotoUrl}`)}/>
