@@ -19,15 +19,19 @@ function MainNavigationPage() {
           <li>
             <Link to="/">Home</Link>
           </li>
-          <li>
+          {authenticated &&
+            <li>
             <Link to="/manage-page">Manage</Link>
-          </li>
-          <li>
-            <Link to="/add-page">Add</Link>
-          </li>
+            </li>
+          }
+          {authenticated &&
+            <li>
+              <Link to="/add-page">Add</Link>
+            </li>
+          }
           {authenticated ? (
             <li>
-              <Link onClick={handleLogout}>Logout</Link>
+              <Link to="/login-page" onClick={handleLogout}>Logout</Link>
             </li>
             ) : (
             <li>

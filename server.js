@@ -194,8 +194,10 @@ app.post('/loggedIn', async (req, res) => {
   console.log({username})
   try {
     const [user] = await db.promise().query('SELECT profile_photo_path FROM users WHERE username = ?', [username]);
-    console.log(user[0])
-    res.status(200).json({profile_photo: user[0]})
+    console.log(user[0]);
+    const path = user[0]['profile_photo_path'].slice(4).replace("\\", "/")
+    console.log(path)
+    res.status(200).json({profile_photo: path});
   } catch (error) {
     
   }
