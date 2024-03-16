@@ -36,8 +36,10 @@ function SignUpPage() {
             // Reset error and set signup success
             setError('');
             setSignupSuccess(true);
+            let path = '../'
+            path.concat(response.data.profile_photo)
             setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
-            console.log('Signup successful:', response.data);
+            console.log('Signup successful:', response.data.profile_photo);
 
 
             console.log('Photo before upload:', photo);
@@ -127,7 +129,7 @@ function SignUpPage() {
            {signupSuccess && !error && (
                 <div>
                     <p>Profile Photo:</p>
-                    <img src={profilePhotoUrl} alt="Profile" />
+                    <img /*onLoad="changeImage"*/ alt="Profile" />
                 </div>
             )}
 

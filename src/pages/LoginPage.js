@@ -32,7 +32,7 @@ function LoginPage() {
       console.log("Login successful:", response.data);
       
       const now = new Date();
-      const expirationTime = now.getTime() + 20 * 1000; // 1 hour expiry time
+      const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('username', username);
       localStorage.setItem('expirationTime', expirationTime.toString());
