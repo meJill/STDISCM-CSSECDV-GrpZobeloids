@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import classes from "./AddCharacterForm.module.css";
 import Card from "../ui/Card";
+import axios from 'axios';
 
 function AddCharacterForm() {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -8,33 +9,48 @@ function AddCharacterForm() {
   const [body, setBody] = useState('');
   const [file, setFile] = useState('');
 
-  const submitHandler = (event) => {
+  const submitHandler = async (event) => {
     event.preventDefault();
-    
-    // Here you can send a request to your backend to add the user post
-    // Example:
-    // fetch('/api/addUserPost', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ title, body, file }),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   }
-    // }).then(response => {
-    //   // Handle response
-    // });
+  
+    try {
+      // Retrieve user_id from local storage
+      const user_id = localStorage.getItem('user_id');
+  
+      // Check if user_id is available
+      if (!user_id) {
+        throw new Error('User ID not found in local storage');
+      }
 
-    // For now, let's just log the values
-    console.log('Title:', title);
-    console.log('Body:', body);
-    console.log('File:', file);
-    
-    // Reset the form fields
-    setTitle('');
-    setBody('');
-    setFile('');
-    
-    // Hide the form after submission
-    setIsFormVisible(false);
+      console.log(title);
+      console.log(body);
+      console.log(user_id);
+      console.log(file);
+
+
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('body', body);
+      formData.append('user_id', user_id); // Add user_id to form data
+  
+      if (file) {
+        formData.append('file', file);
+      }
+      
+
+      const response = await axios.post('http://localhost:5000/api/addUserPost', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data' // Set proper headers for FormData
+        }
+      });
+  
+  
+      // Reset the form fields
+      setTitle('');
+      setBody('');
+      setFile('');
+    } catch (error) {
+      console.error('Error adding user post:', error.message);
+    }
   };
 
   const toggleFormVisibility = () => {

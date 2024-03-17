@@ -220,7 +220,7 @@ app.post('/login', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
-        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo });
+        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo , user_id: user[0].user_id});
       } else {
         // Passwords do not match, return error response
         res.status(401).json({ error: 'Invalid username or password' });
@@ -235,6 +235,42 @@ app.post('/login', async (req, res) => {
   }
 });
 
+
+
+app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
+  const { title, body, user_id } = req.body;
+  const file = req.file;
+
+  try {
+    let filePath = null;
+
+    if (file) {
+      filePath = file.path; // Get the path of the uploaded file
+    }
+
+    // Insert the new post into the database
+    await db.promise().query(
+      'INSERT INTO user_posts (title, body, file_path, user_id) VALUES (?, ?, ?, ?)',
+      [title, body, filePath, user_id]
+    );
+
+    res.status(201).json({ message: 'User post added successfully' });
+  } catch (error) {
+    console.error('Error adding user post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+
+    // If an error occurs during the uploading process, delete the file
+    if (file && filePath) {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting file:', err);
+        } else {
+          console.log('File deleted successfully');
+        }
+      });
+    }
+  }
+});
 
 // Define routes for CRUD operations
 app.get('/api/data', (req, res) => {
