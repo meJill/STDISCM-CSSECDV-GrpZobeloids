@@ -2,9 +2,9 @@
 
 function ManagePage() {
   return (
-    <div className="manage-page">
+    <div className="manage-posts-page">
     {" "}
-    <h1> Manage </h1>{" "}
+    <h1> Manage Posts</h1>{" "}
   
 
     </div>
