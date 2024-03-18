@@ -236,7 +236,7 @@ app.post('/login', async (req, res) => {
 });
 
 
-
+// Add a post with a file (if added) to the database
 app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
   const { title, body, user_id } = req.body;
   const file = req.file;
@@ -269,6 +269,24 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
         }
       });
     }
+  }
+});
+
+// Define a route to fetch all posts by a given user_id
+app.get('/api/posts/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+
+  try {
+    // Fetch posts from the database based on the user_id
+    const [posts] = await db.promise().query(
+      'SELECT * FROM user_posts WHERE user_id = ?',
+      [user_id]
+    );
+
+    res.json({ posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
