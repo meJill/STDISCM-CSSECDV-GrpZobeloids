@@ -6,11 +6,10 @@ import ManagePage from "./pages/ManagePage";
 import AddPage from "./pages/AddPage";
 import LoginPage from "./pages/LoginPage";
 import Layout from "./components/layout/Layout";
-import ProfilePage from "./pages/ProfilePage";
-import AdminPage from "./pages/AdminPage";
+
 import AddCharacterForm from "./components/actions/AddCharacterForm";
 import SignUpPage from "./pages/SignUpPage";
-import Admin from "./pages/AdminPage";
+
 function App() {
   return (
     <Layout>
