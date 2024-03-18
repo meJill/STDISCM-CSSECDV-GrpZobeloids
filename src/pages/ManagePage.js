@@ -31,7 +31,7 @@ function ManagePage() {
         {posts.map(post => (
           <div key={post.id} className="post">
             <h2>{post.title}</h2>
-            <p>{post.body}</p>
+            <p>{post.body} || {post.file_path}</p>
             {/* Display other post details as needed */}
           </div>
         ))}
