@@ -29,6 +29,11 @@ function MainNavigationPage() {
               <Link to="/add-page">Add Post</Link>
             </li>
           }
+          {authenticated &&
+            <li>
+              <Link to="/profile-page">Profile Page</Link>
+            </li>
+          }
           {authenticated ? (
             <li>
               <Link to="/login-page" onClick={handleLogout}>Logout</Link>

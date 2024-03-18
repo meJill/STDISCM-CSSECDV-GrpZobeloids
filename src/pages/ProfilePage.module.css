@@ -1,0 +1,39 @@
+.form{
+    margin: 2vh;
+}
+
+.control{
+    padding: 10px
+}
+
+.control input{
+    font-size: large;
+    width: 100%;
+    padding: 8px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+
+.control label{
+    font-size: larger;
+    font-weight: bold;
+}
+
+.actions button{
+
+    font: inherit;
+    cursor: pointer;
+    background-color: #21262D;
+    color: rgb(255, 255, 255);
+    padding: 0.5rem 1.5rem;
+    border-color: #2D3137;
+    border-radius: 12px;
+    border-width: thick solid;
+
+}
+  
+.actions button:hover,
+.actions button:active {
+background-color: #ffffff;
+color: black;
+}

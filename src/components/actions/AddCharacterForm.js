@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import classes from "./AddCharacterForm.module.css";
 import Card from "../ui/Card";
+import ButtonCard from "../ui/ButtonCard";
 import axios from 'axios';
 
 function AddCharacterForm() {
@@ -58,13 +59,14 @@ function AddCharacterForm() {
   };
 
   return (
-    <Card>
+    <ButtonCard>
       {!isFormVisible && (
-        <div className={classes.actions}>
+        <div className={classes.toggle}>
           <button onClick={toggleFormVisibility}>Add</button>
         </div>
       )}
       {isFormVisible && (
+        <Card>
         <form className={classes.form} onSubmit={submitHandler}>
           <div className={classes.control}>
             <label htmlFor="title">Title</label>
@@ -99,8 +101,9 @@ function AddCharacterForm() {
             <button type="submit">Add User Post</button>
           </div>
         </form>
+        </Card>
       )}
-    </Card>
+    </ButtonCard>
   );
 }
 

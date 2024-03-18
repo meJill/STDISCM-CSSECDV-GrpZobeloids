@@ -46,7 +46,19 @@ h1{
   }
   
   .actions button:hover,
-  .actions button:active {
+  .actions button:active , .toggle button:hover, .toggle button:active{
     background-color: #ffffff;
     color: black;
+  }
+
+
+  .toggle button{
+    font: inherit;
+    cursor: pointer;
+    background-color: #21262D;
+    color: rgb(255, 255, 255);
+    padding: 0.5rem 1.5rem;
+    border-color: #2D3137;
+    border-radius: 12px;
+    border-width: thick solid;
   }

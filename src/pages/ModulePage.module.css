@@ -1,0 +1,34 @@
+.post button {
+  font: inherit;
+  cursor: pointer;
+  background-color: #21262d;
+  color: rgb(255, 255, 255);
+  padding: 0.5rem 1.5rem;
+  border-color: #2d3137;
+  border-radius: 12px;
+  border-width: thick solid;
+}
+
+.post button:hover,
+.post button:active {
+  background-color: #ffffff;
+  color: black;
+}
+
+.posts_name {
+  justify-content: center;
+  align-items: center;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.post {
+  flex: 0 0 20%; /* explanation below */
+  padding: 3vh;
+  margin: 5px;
+  background-color: #0d1117;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}

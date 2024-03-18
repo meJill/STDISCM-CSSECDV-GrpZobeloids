@@ -4,7 +4,7 @@ const express = require('express');
 const mysql = require('mysql2');
 
 const app = express();
-const config = require('./config');
+const config = require('./src/views/config');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
@@ -258,7 +258,7 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
   } catch (error) {
     console.error('Error adding user post:', error);
     res.status(500).json({ error: 'Internal server error' });
-
+    let filePath = file.path; // Get the path of the uploaded file
     // If an error occurs during the uploading process, delete the file
     if (file && filePath) {
       fs.unlink(filePath, (err) => {
