@@ -302,6 +302,25 @@ app.get('/api/posts/:user_id', async (req, res) => {
   }
 });
 
+// Route to edit a post by its ID
+app.put('/api/posts/:post_id', async (req, res) => {
+  const post_id = req.params.post_id;
+  const { title, body } = req.body;
+
+  try {
+    // Update the post in the database based on the post_id
+    await db.promise().query(
+      'UPDATE user_posts SET title = ?, body = ? WHERE post_id = ?',
+      [title, body, post_id]
+    );
+
+    res.status(200).json({ message: 'Post updated successfully' });
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Route to delete a post by its ID
 app.delete('/api/posts/:post_id', async (req, res) => {
   const post_id = req.params.post_id;
