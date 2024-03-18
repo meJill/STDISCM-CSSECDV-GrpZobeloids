@@ -235,6 +235,34 @@ app.post('/login', async (req, res) => {
   }
 });
 
+app.post('/admin-login-page', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Fetch admin from the database
+    const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
+
+    if (admin.length === 1) {
+      // Admin exists, compare passwords
+      const hashedPassword = admin[0].password;
+      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+      if (passwordMatch) {
+        // Passwords match, return success response
+        res.status(200).json({ message: 'Login successful', admin_id: admin[0].admin_id});
+      } else {
+        // Passwords do not match, return error response
+        res.status(401).json({ error: 'Invalid username or password' });
+      }
+    } else {
+      // No user found with provided username, return error response
+      res.status(401).json({ error: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Add a post with a file (if added) to the database
 app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
