@@ -15,6 +15,23 @@ const Dummy_Data =[{
 function HomePage(){
     const authenticated = useAuth();
     const [profilePhotoUrl, setProfilePhotoUrl] = useState('');
+    const [posts, setPosts] = useState([]);
+
+    useEffect(() => {
+        const fetchPosts = async () => {
+          try {
+            // Fetch all posts from the backend
+            const response = await axios.get('http://localhost:5000/api/posts');
+            setPosts(response.data.posts);
+          } catch (error) {
+            console.error('Error fetching posts:', error);
+          }
+        };
+    
+        fetchPosts();
+      }, []);
+
+
     const IsLoggedIn = async () => {
         console.log(localStorage.getItem('username'))
         let username = localStorage.getItem('username')
@@ -31,6 +48,10 @@ function HomePage(){
         } catch (error) {
 
         }
+
+
+        
+        
         return true;
     };
     console.log(import.meta.url)
@@ -50,7 +71,18 @@ function HomePage(){
 
             </div>  
         }
+      <div className="posts-list">
+            <h1> Recent Posts: </h1> /* not sorted yet */
+        {posts.map(post => (
+          <div key={post.post_id} className="post">
+            <h2>{post.title}</h2>
+            <p>{post.post_id} || {post.body} || {post.file_path}</p>
+          </div>
+        ))}
+      </div>
     </div>
+
+
     
     );
 }

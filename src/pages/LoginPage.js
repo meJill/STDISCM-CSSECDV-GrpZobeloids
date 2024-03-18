@@ -35,6 +35,7 @@ function LoginPage() {
       const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('username', username);
+      localStorage.setItem('user_id', response.data.user_id); // Set user_id from response
       localStorage.setItem('expirationTime', expirationTime.toString());
 
       navigate('/');

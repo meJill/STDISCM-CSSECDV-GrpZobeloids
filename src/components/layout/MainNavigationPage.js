@@ -21,12 +21,12 @@ function MainNavigationPage() {
           </li>
           {authenticated &&
             <li>
-            <Link to="/manage-page">Manage</Link>
+            <Link to="/manage-page">Manage Posts</Link>
             </li>
           }
           {authenticated &&
             <li>
-              <Link to="/add-page">Add</Link>
+              <Link to="/add-page">Add Post</Link>
             </li>
           }
           {authenticated ? (

@@ -220,7 +220,7 @@ app.post('/login', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
-        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo });
+        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo , user_id: user[0].user_id});
       } else {
         // Passwords do not match, return error response
         res.status(401).json({ error: 'Invalid username or password' });
@@ -235,6 +235,106 @@ app.post('/login', async (req, res) => {
   }
 });
 
+
+// Add a post with a file (if added) to the database
+app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
+  const { title, body, user_id } = req.body;
+  const file = req.file;
+
+  try {
+    let filePath = null;
+
+    if (file) {
+      filePath = file.path; // Get the path of the uploaded file
+    }
+
+    // Insert the new post into the database
+    await db.promise().query(
+      'INSERT INTO user_posts (title, body, file_path, user_id) VALUES (?, ?, ?, ?)',
+      [title, body, filePath, user_id]
+    );
+
+    res.status(201).json({ message: 'User post added successfully' });
+  } catch (error) {
+    console.error('Error adding user post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+
+    // If an error occurs during the uploading process, delete the file
+    if (file && filePath) {
+      fs.unlink(filePath, (err) => {
+        if (err) {
+          console.error('Error deleting file:', err);
+        } else {
+          console.log('File deleted successfully');
+        }
+      });
+    }
+  }
+});
+
+// Route to fetch all posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const [posts] = await db.promise().query('SELECT * FROM user_posts');
+    res.json({ posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to fetch all posts by a given user_id
+app.get('/api/posts/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+
+  try {
+    // Fetch posts from the database based on the user_id
+    const [posts] = await db.promise().query(
+      'SELECT * FROM user_posts WHERE user_id = ?',
+      [user_id]
+    );
+
+    res.json({ posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to edit a post by its ID
+app.put('/api/posts/:post_id', async (req, res) => {
+  const post_id = req.params.post_id;
+  const { title, body } = req.body;
+
+  try {
+    // Update the post in the database based on the post_id
+    await db.promise().query(
+      'UPDATE user_posts SET title = ?, body = ? WHERE post_id = ?',
+      [title, body, post_id]
+    );
+
+    res.status(200).json({ message: 'Post updated successfully' });
+  } catch (error) {
+    console.error('Error updating post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to delete a post by its ID
+app.delete('/api/posts/:post_id', async (req, res) => {
+  const post_id = req.params.post_id;
+
+  try {
+    // Delete the post from the database based on the post_id
+    await db.promise().query('DELETE FROM user_posts WHERE post_id = ?', [post_id]);
+
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Define routes for CRUD operations
 app.get('/api/data', (req, res) => {
