@@ -290,6 +290,21 @@ app.get('/api/posts/:user_id', async (req, res) => {
   }
 });
 
+// Add a route to delete a post by its ID
+app.delete('/api/posts/:post_id', async (req, res) => {
+  const post_id = req.params.post_id;
+
+  try {
+    // Delete the post from the database based on the post_id
+    await db.promise().query('DELETE FROM user_posts WHERE post_id = ?', [post_id]);
+
+    res.status(200).json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Define routes for CRUD operations
 app.get('/api/data', (req, res) => {
   db.query('SELECT * FROM your_table', (err, result) => {
