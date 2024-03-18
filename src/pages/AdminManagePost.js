@@ -3,7 +3,7 @@ import axios from 'axios';
 
 function AdminManagePost() {
   const [posts, setPosts] = useState([]);
-  const [editUserID, setEditUserID] = useState(null);
+  const [editUserID, setEditUserID] = useState(null); //State to track the user being edited
   const [editPostId, setEditPostId] = useState(null); // State to track the post being edited
   const [editedTitle, setEditedTitle] = useState('');
   const [editedBody, setEditedBody] = useState('');

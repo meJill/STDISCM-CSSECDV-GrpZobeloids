@@ -1,6 +1,6 @@
 import AddCharacterForm from "../components/actions/AddCharacterForm";
 
-function AddPage() {
+function AdminPage() {
   return (
     <section className = "admin-page">
     {" "}
@@ -13,4 +13,4 @@ function AddPage() {
   );
 }
 
-export default AddPage;
+export default AdminPage;
