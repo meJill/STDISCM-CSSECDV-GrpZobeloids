@@ -272,7 +272,19 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
   }
 });
 
-// Define a route to fetch all posts by a given user_id
+// Route to fetch all posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const [posts] = await db.promise().query('SELECT * FROM user_posts');
+    res.json({ posts });
+  } catch (error) {
+    console.error('Error fetching posts:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to fetch all posts by a given user_id
 app.get('/api/posts/:user_id', async (req, res) => {
   const user_id = req.params.user_id;
 
@@ -290,7 +302,7 @@ app.get('/api/posts/:user_id', async (req, res) => {
   }
 });
 
-// Add a route to delete a post by its ID
+// Route to delete a post by its ID
 app.delete('/api/posts/:post_id', async (req, res) => {
   const post_id = req.params.post_id;
 
