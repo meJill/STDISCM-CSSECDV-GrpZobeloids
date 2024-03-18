@@ -6,6 +6,7 @@ function ManagePage() {
   const [editPostId, setEditPostId] = useState(null); // State to track the post being edited
   const [editedTitle, setEditedTitle] = useState('');
   const [editedBody, setEditedBody] = useState('');
+  const [deleteConfirmation, setDeleteConfirmation] = useState(null); // State to track post deletion confirmation
 
   useEffect(() => {
     // Fetch posts associated with the user_id from the backend
@@ -62,15 +63,26 @@ function ManagePage() {
     }
   };
 
+  const confirmDelete = (postId) => {
+    setDeleteConfirmation(postId); // Set the postId for which deletion confirmation is needed
+  };
+
+  const cancelDelete = () => {
+    setDeleteConfirmation(null); // Clear the postId for deletion confirmation
+  };
+
   const handleDelete = async (postId) => {
-    try {
-      // Make a request to delete the post with the specified ID
-      const response = await axios.delete(`http://localhost:5000/api/posts/${postId}`);
-      console.log(response.data.message); // Log success message
-      // Remove the deleted post from the state
-      setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
-    } catch (error) {
-      console.error('Error deleting post:', error);
+    if (deleteConfirmation === postId) {
+      try {
+        // Make a request to delete the post with the specified ID
+        const response = await axios.delete(`http://localhost:5000/api/posts/${postId}`);
+        console.log(response.data.message); // Log success message
+        // Remove the deleted post from the state
+        setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
+        setDeleteConfirmation(null); // Clear the postId for deletion confirmation
+      } catch (error) {
+        console.error('Error deleting post:', error);
+      }
     }
   };
 
@@ -101,12 +113,21 @@ function ManagePage() {
                 <p>{post.body}</p>
                 {/* Edit and Delete buttons */}
                 <button onClick={() => handleEdit(post.post_id, post.title, post.body)}>Edit</button>
-                <button onClick={() => handleDelete(post.post_id)}>Delete</button>
+                <button onClick={() => confirmDelete(post.post_id)}>Delete</button>
+                      {/* Delete confirmation dialog */}
+      {deleteConfirmation && (
+        <div className="delete-confirmation">
+          <p>Are you sure you want to delete this post?</p>
+          <button onClick={() => handleDelete(deleteConfirmation)}>Yes</button>
+          <button onClick={cancelDelete}>No</button>
+        </div>
+      )}
               </div>
             )}
           </div>
         ))}
       </div>
+
     </div>
   );
 }
