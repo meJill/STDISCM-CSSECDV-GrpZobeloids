@@ -15,7 +15,7 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [captchaCompleted, setCaptchaCompleted] = useState(false);
+  const [captchaCompleted, setCaptchaCompleted] = useState(true);
 
   const handleLogin = async (event) => {
     event.preventDefault();

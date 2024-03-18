@@ -235,6 +235,39 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// GET user by ID
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const [user] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json({ user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Route to edit user details by user ID
+app.put('/api/users/:id', async (req, res) => {
+  const userId = req.params.id;
+  const { username, email, phone_no } = req.body;
+
+  try {
+    // Update the user details in the database based on the user ID
+    await db.promise().query(
+      'UPDATE users SET username = ?, email = ?, phone_no = ? WHERE user_id = ?',
+      [username, email, phone_no, userId]
+    );
+
+    res.status(200).json({ message: 'User details updated successfully' });
+  } catch (error) {
+    console.error('Error updating user details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Add a post with a file (if added) to the database
 app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
