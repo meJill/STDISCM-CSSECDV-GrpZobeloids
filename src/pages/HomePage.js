@@ -21,7 +21,7 @@ function HomePage(){
         const fetchPosts = async () => {
           try {
             // Fetch all posts from the backend
-            const response = await axios.get('http://localhost:5000/api/posts');
+            const response = await axios.get('https://localhost:5000/api/posts');
             setPosts(response.data.posts);
           } catch (error) {
             console.error('Error fetching posts:', error);
@@ -36,7 +36,7 @@ function HomePage(){
         console.log(localStorage.getItem('username'))
         let username = localStorage.getItem('username')
         try {
-            const response = await axios.post("http://localhost:5000/loggedIn", {
+            const response = await axios.post("https://localhost:5000/loggedIn", {
                 username
             });
             console.log(response.data.profile_photo)

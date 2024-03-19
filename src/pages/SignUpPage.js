@@ -27,7 +27,7 @@ function SignUpPage() {
             formData.append('photo', photo); // Append photo file
     
             // Send POST request with form data to /register endpoint
-            const response = await axios.post('http://localhost:5000/register', formData, {
+            const response = await axios.post('https://localhost:5000/register', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
