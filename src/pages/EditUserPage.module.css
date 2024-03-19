@@ -30,10 +30,15 @@
     border-radius: 12px;
     border-width: thick solid;
 
+
 }
   
 .actions button:hover,
 .actions button:active {
 background-color: #ffffff;
 color: black;
+}
+
+.container{
+    padding: 20px;
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import classes from './EditUserPage.module.css';
+import Card from '../components/ui/Card'
 function EditUserPage() {
   const [user, setUser] = useState(null);
   const [editedUsername, setEditedUsername] = useState('');
@@ -45,11 +46,13 @@ function EditUserPage() {
     }
   };
   return (
-    <div className="edit-user-page">
+    
+    <div>
       <h1>Edit User</h1>
+      <Card>
       {user && (
-        <div>
-          <div>
+        <div className={classes.container}>
+          <div className={classes.control}>
             <label>Edit Username:</label>
             <input
               type="text"
@@ -57,7 +60,7 @@ function EditUserPage() {
               onChange={(event) => setEditedUsername(event.target.value)}
             />
           </div>
-          <div>
+          <div className={classes.control}>
             <label>Edit Email:</label>
             <input
               type="email"
@@ -65,7 +68,7 @@ function EditUserPage() {
               onChange={(event) => setEditedEmail(event.target.value)}
             />
           </div>
-          <div>
+          <div className = {classes.control}>
             <label>Edit Phone Number:</label>
             <input
               type="text"
@@ -73,10 +76,14 @@ function EditUserPage() {
               onChange={(event) => setEditedPhoneNo(event.target.value)}
             />
           </div>
-          <button onClick={handleSaveEdit}>Save</button>
+          <div className = {classes.actions}>
+          <button onClick={handleSaveEdit} className={classes.update}>Save</button>
+          </div>
         </div>
       )}
+      </Card>
     </div>
+    
   );
 }
 

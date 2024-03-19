@@ -31,7 +31,7 @@ function MainNavigationPage() {
           }
           {authenticated &&
             <li>
-              <Link to="/profile-page">Profile Page</Link>
+              <Link to="/edit-user-page">Edit User Page</Link>
             </li>
           }
           {authenticated ? (
