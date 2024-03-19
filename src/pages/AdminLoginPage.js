@@ -1,23 +1,23 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha'; // Import ReCAPTCHA
-import classes from './AdminLoginPage.module.css';
-import Card from '../components/ui/Card';
-import axios from 'axios';
-import config from './config';
-import AuthService from '../services/AuthService';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
+import classes from "./AdminLoginPage.module.css";
+import Card from "../components/ui/Card";
+import axios from "axios";
+import config from "./config";
+import AuthService from "../services/AuthService";
 
 function AdminLoginPage() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [captchaCompleted, setCaptchaCompleted] = useState(false);
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
       if (!captchaCompleted) {
-        setError('Please complete the CAPTCHA.');
+        setError("Please complete the CAPTCHA.");
         return;
       }
       const response = await axios.post("http://localhost:5000/login", {
@@ -26,21 +26,20 @@ function AdminLoginPage() {
       });
       setError("");
       console.log("Login successful:", response.data);
-      
+
       const now = new Date();
       const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
-      localStorage.setItem('isLoggedIn', 'true');
-      localStorage.setItem('username', username);
-      localStorage.setItem('user_id', response.data.user_id); // Set user_id from response
-      localStorage.setItem('expirationTime', expirationTime.toString());
+      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("username", username);
+      localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
+      localStorage.setItem("expirationTime", expirationTime.toString());
 
-      navigate('/');
-
+      navigate("/");
 
       // Your login logic
     } catch (error) {
-      setError('Invalid username or password');
-      console.error('Login failed:', error);
+      setError("Invalid username or password");
+      console.error("Login failed:", error);
     }
   };
 
@@ -79,11 +78,16 @@ function AdminLoginPage() {
           </div>
           {error && <p className={classes.error}>{error}</p>}
           {/* Add ReCAPTCHA component */}
-          <div className = {classes.captcha}>
-          <ReCAPTCHA sitekey={config.google_site_key} onChange={handleCaptchaChange} />
+          <div className={classes.captcha}>
+            <ReCAPTCHA
+              sitekey={config.google_site_key}
+              onChange={handleCaptchaChange}
+            />
           </div>
           <div className={classes.actions}>
-            <button type="submit" className={classes.login} > {/*disabled={!captchaCompleted}*/}
+            <button type="submit" className={classes.login}>
+              {" "}
+              {/*disabled={!captchaCompleted}*/}
               Login
             </button>
           </div>
