@@ -1,12 +1,12 @@
-import MainNavigationPage from "./MainNavigationPage";
+import AdminNavigationPage from "./AdminNavigationPage";
 import classes from "./Layout.module.css";
 
-function Layout(props) {
+function AdminLayout(props) {
   return (
     <div>
       <div className="navbar">
         {" "}
-        <MainNavigationPage />{" "}
+        <AdminNavigationPage />{" "}
         <main className = {classes.main}>
             {props.children}
         </main>
@@ -16,4 +16,4 @@ function Layout(props) {
 }
 
 
-export default Layout;
+export default AdminLayout;

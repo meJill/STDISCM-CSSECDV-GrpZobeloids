@@ -9,24 +9,32 @@ import Layout from "./components/layout/Layout";
 
 import AddCharacterForm from "./components/actions/AddCharacterForm";
 import SignUpPage from "./pages/SignUpPage";
+
+import AdminLayout from "./components/layout/AdminLayout";
+import AdminLoginPage from "./pages/AdminLoginPage";
+import AdminPage from "./pages/AdminPage";
+import AdminManagePost from "./pages/AdminManagePost";
+import AdminManageUsers from "./pages/AdminManageUsers";
 import EditUserPage from "./pages/EditUserPage";
 
 function App() {
   return (
-    <Layout>
-    
       <div className="app-container">
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/manage-page" element={<ManagePage />} />
-          <Route path="/add-page" element={<AddPage />} />
-          <Route path="/login-page" element={<LoginPage />} />
-          <Route path="/signup-page" element={<SignUpPage />} />
-          <Route path="/edit-user-page" element={<EditUserPage />} />
+          <Route path="/" element={(<Layout><HomePage /></Layout>)} />
+          <Route path="/manage-page" element={(<Layout><ManagePage /></Layout>)} />
+          <Route path="/add-page" element={(<Layout><AddPage /></Layout>)} />
+          <Route path="/login-page" element={(<Layout><LoginPage /></Layout>)} />
+          <Route path="/signup-page" element={(<Layout><SignUpPage /></Layout>)} />
+          <Route path="/edit-user-page" element={(<Layout><EditUserPage /></Layout>)} />
+          
+          <Route path="/admin-login-page" element={(<AdminLayout><AdminLoginPage /></AdminLayout>)} />
+          <Route path="/admin-page" element={(<AdminLayout><AdminPage /></AdminLayout>)} />
+          <Route path="/admin-manage-post" element={(<AdminLayout><AdminManagePost /></AdminLayout>)} />
+          <Route path="/admin-manage-users" element={(<AdminLayout><AdminManageUsers /></AdminLayout>)} />
         </Routes>
       
       </div>
-    </Layout> 
   );
 }
 

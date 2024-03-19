@@ -210,8 +210,8 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Fetch user from the database
-    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+    // Fetch user from the database and make sure not to get deleted users
+    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
 
     if (user.length === 1) {
       // User exists, compare passwords
@@ -265,6 +265,34 @@ app.put('/api/users/:id', async (req, res) => {
     res.status(200).json({ message: 'User details updated successfully' });
   } catch (error) {
     console.error('Error updating user details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+app.post('/admin-login-page', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Fetch admin from the database
+    const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
+
+    if (admin.length === 1) {
+      // Admin exists, compare passwords
+      const hashedPassword = admin[0].password;
+      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+      if (passwordMatch) {
+        // Passwords match, return success response
+        res.status(200).json({ message: 'Login successful', admin_id: admin[0].admin_id});
+      } else {
+        // Passwords do not match, return error response
+        res.status(401).json({ error: 'Invalid username or password' });
+      }
+    } else {
+      // No user found with provided username, return error response
+      res.status(401).json({ error: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -365,6 +393,53 @@ app.delete('/api/posts/:post_id', async (req, res) => {
     res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
     console.error('Error deleting post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to fetch all users
+app.get('/api/users', async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const [users] = await db.promise().query('SELECT * FROM users WHERE deleted_at IS NULL');
+    res.json({ users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to edit a user by its ID
+app.put('/api/users/edit/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+  const { username, email } = req.body;
+
+  try {
+    // Update the user in the database based on the user_id
+    await db.promise().query(
+      'UPDATE users SET username = ?, email = ? WHERE user_id = ?',
+      [username, email, user_id]
+    );
+
+    res.status(200).json({ message: 'User updated successfully' });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to soft delete a user by its ID
+app.put('/api/users/delete/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+  const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  try {
+    // Delete the user from the database based on the user_id
+    await db.promise().query('UPDATE users SET deleted_at = ? WHERE user_id = ?', [date, user_id]);
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
