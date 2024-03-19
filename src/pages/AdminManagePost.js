@@ -11,20 +11,16 @@ function AdminManagePost() {
   const [deleteConfirmationId, setDeleteConfirmationId] = useState(null); // State to track post ID for which confirmation is shown
 
   useEffect(() => {
-    // Fetch posts associated with the user_id from the backend
     const fetchPosts = async () => {
       try {
-        const user_id = localStorage.getItem('user_id');
-        if (!user_id) {
-          throw new Error('User ID not found in local storage');
+        // Fetch all posts from the backend
+          const response = await axios.get('http://localhost:5000/api/posts');
+          setPosts(response.data.posts);
         }
-        
-        // Make sure to specify the full URL of your backend server
-        const response = await axios.get(`http://localhost:5000/api/posts/${user_id}`);
-        setPosts(response.data.posts);
-      } catch (error) {
-        console.error('Error fetching posts:', error);
+      catch (error) {
+          console.error('Error fetching posts:', error);
       }
+        fetchPosts();
     };
 
     fetchPosts();

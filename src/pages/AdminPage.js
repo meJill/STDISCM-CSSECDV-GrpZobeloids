@@ -7,7 +7,7 @@ function AdminPage() {
     <div className = "AddContainer">
         <h1> Admin </h1>
     </div>
-    <AddCharacterForm />
+    
     
     </section>
   );
