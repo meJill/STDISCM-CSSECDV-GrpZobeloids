@@ -38,7 +38,7 @@ function AdminManageUsers() {
   const handleSaveEdit = async () => {
     try {
       // Make a request to update the user with the specified ID
-      const response = await axios.put(`http://localhost:5000/api/users/${selectUserId}`, {
+      const response = await axios.put(`http://localhost:5000/api/edit/users/${selectUserId}`, {
         username: selectedUsername,
         email: selectedEmail
       });
