@@ -4,7 +4,7 @@ const express = require('express');
 const mysql = require('mysql2');
 
 const app = express();
-const config = require('./src/views/config');
+const config = require('./config');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const multer = require('multer');
