@@ -17,7 +17,7 @@ function AdminNavigationPage() {
       <nav>
         <ul>
           <li>
-            <Link to="/">Home</Link>
+            <Link to="/admin-page">Home</Link>
           </li>
           {authenticated &&
             <li>

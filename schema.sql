@@ -56,6 +56,7 @@ CREATE TABLE `users` (
   `email` varchar(255) NOT NULL,
   `phone_no` bigint DEFAULT NULL,
   `profile_photo_path` varchar(255) DEFAULT NULL,
+  `deleted_at` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

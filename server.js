@@ -12,6 +12,7 @@ const upload = multer({ dest: 'src/images/' }); // Destination folder for upload
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const { isDate } = require('util/types');
 
 
 // Function to check if the database exists
@@ -360,6 +361,53 @@ app.delete('/api/posts/:post_id', async (req, res) => {
     res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
     console.error('Error deleting post:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to fetch all users
+app.get('/api/users', async (req, res) => {
+  try {
+    // Fetch all posts from the database
+    const [users] = await db.promise().query('SELECT * FROM users WHERE deleted_at IS NULL');
+    res.json({ users });
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to edit a user by its ID
+app.put('/api/users/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+  const { username, email } = req.body;
+
+  try {
+    // Update the user in the database based on the user_id
+    await db.promise().query(
+      'UPDATE users SET username = ?, email = ? WHERE user_id = ?',
+      [username, email, user_id]
+    );
+
+    res.status(200).json({ message: 'User updated successfully' });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Route to soft delete a user by its ID
+app.put('/api/users/delete/:user_id', async (req, res) => {
+  const user_id = req.params.user_id;
+  const date = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+  try {
+    // Delete the user from the database based on the user_id
+    await db.promise().query('UPDATE users SET deleted_at = ? WHERE user_id = ?', [date, user_id]);
+
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
