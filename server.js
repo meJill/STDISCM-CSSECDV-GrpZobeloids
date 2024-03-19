@@ -211,8 +211,8 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    // Fetch user from the database
-    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+    // Fetch user from the database and make sure not to get deleted users
+    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
 
     if (user.length === 1) {
       // User exists, compare passwords
