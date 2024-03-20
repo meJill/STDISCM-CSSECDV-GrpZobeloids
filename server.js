@@ -13,6 +13,8 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
 
+const axios = require('axios');
+
 
 // Function to check if the database exists
 const checkDatabaseExists = () => {
@@ -206,10 +208,39 @@ app.post('/loggedIn', async (req, res) => {
   
 });
 
-app.post('/login', async (req, res) => {
-  const { username, password } = req.body;
-
+// Function to verify reCAPTCHA token
+async function verifyRecaptchaToken(token) {
   try {
+    const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
+      params: {
+        secret: config.google_private_key,
+        response: token,
+      },
+    });
+
+    console.log('reCAPTCHA verification response:', response.data);
+
+    return response.data.success;
+  } catch (error) {
+    console.error('Error verifying reCAPTCHA token:', error);
+    return false;
+  }
+}
+
+app.post('/login', async (req, res) => {
+  const { username, password, captchaToken } = req.body;
+
+
+  try {    
+    // Verify the reCAPTCHA token
+    const isRecaptchaVerified = await verifyRecaptchaToken(captchaToken);
+
+    if (!isRecaptchaVerified) {
+      console.log('reCAPTCHA verification failed');
+      return res.status(403).json({ error: 'reCAPTCHA verification failed' });
+    }
+
+
     // Fetch user from the database and make sure not to get deleted users
     const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
 
@@ -233,6 +264,7 @@ app.post('/login', async (req, res) => {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+
 });
 
 // GET user by ID

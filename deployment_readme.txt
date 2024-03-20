@@ -7,7 +7,7 @@ dependencies: npm, nodejs, react
 3. run your database server and make sure it is running
 4. run schema.sql (which is in the root folder) in the sql server that is running to initalize the database within it (May not be needed as code was added to create the 
 database if not already there)
-5. create config.js in root folder and set database credentials there (host, user, password, database)
+5. create config.js in root folder and src folder and set database credentials there (host, user, password, database)
 follow this format: (note that if you did database script then the database name should be called "test")
 module.exports = {
     database: {
@@ -16,11 +16,8 @@ module.exports = {
         password: 'password',
         database: 'database name'
     }
+    google_site_key: 'key',
+    google_private_key: 'key'
 };
-6. create another config.js file in the src folder and set the google_site_key there
-follow this format:
-module.exports = {
-    google_site_key: 'key'
-};
-7. use npm run server to run the server
-8. use npm start to run the react app
+6. use npm run server to run the server
+7. use npm start to run the react app
