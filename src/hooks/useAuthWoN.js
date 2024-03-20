@@ -1,17 +1,16 @@
 import { useState, useEffect } from 'react';
 import AuthService from '../services/AuthService';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router';
 
-function useAuth() {
+
+function useAuthWoN() {
   const [authenticated, setAuthenticated] = useState(AuthService.isAuthenticated());
-  const navigate = useNavigate();
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const expired = AuthService.isSessionExpired();
-      if (expired) {
-        AuthService.logout(); // Logout if session is expired
-        setAuthenticated(false); // Update authentication state
-        navigate('/login-page')
+    useEffect(() => {
+      const intervalId = setInterval(() => {
+        const expired = AuthService.isSessionExpired();
+        if (expired) {
+          AuthService.logout(); // Logout if session is expired
+          setAuthenticated(false); // Update authentication state
       } else {
         setAuthenticated(AuthService.isAuthenticated());
       }
@@ -23,4 +22,4 @@ function useAuth() {
   return authenticated;
 }
 
-export default useAuth;
+export default useAuthWoN;

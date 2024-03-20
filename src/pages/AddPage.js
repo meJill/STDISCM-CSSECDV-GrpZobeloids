@@ -1,6 +1,8 @@
 import AddCharacterForm from "../components/actions/AddCharacterForm";
+import useAuth from '../hooks/useAuth';
 
 function AddPage() {
+  const authenticated = useAuth();
   return (
     <section className="add-posts-page">
       {" "}

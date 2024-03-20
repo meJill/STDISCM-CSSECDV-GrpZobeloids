@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useAuth from '../hooks/useAuth';
 
 function AdminManagePost() {
+  const authenticated = useAuth();
   const [posts, setPosts] = useState([]);
   const [editPostId, setEditPostId] = useState(null); // State to track the post being edited
   const [editedTitle, setEditedTitle] = useState('');
