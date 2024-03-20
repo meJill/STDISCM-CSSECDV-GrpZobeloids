@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import classes from './EditUserPage.module.css';
+import useAuth from '../hooks/useAuth';
 import Card from '../components/ui/Card'
+
 function EditUserPage() {
+  const authenticated = useAuth();
   const [user, setUser] = useState(null);
   const [editedUsername, setEditedUsername] = useState('');
   const [editedEmail, setEditedEmail] = useState('');

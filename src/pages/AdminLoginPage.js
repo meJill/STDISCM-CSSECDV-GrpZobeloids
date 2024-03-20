@@ -4,8 +4,7 @@ import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
 import classes from "./AdminLoginPage.module.css";
 import Card from "../components/ui/Card";
 import axios from "axios";
-import config from "./config";
-import AuthService from "../services/AuthService";
+import config from "../config";
 
 function AdminLoginPage() {
   const [username, setUsername] = useState("");

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import classes from "./ModulePage.module.css";
+import useAuth from '../hooks/useAuth';
 
 function AdminUserPage() {
+  const authenticated = useAuth();
   const [posts, setPosts] = useState([]);
   const [editPostId, setEditPostId] = useState(null); // State to track the post being edited
   const [editedTitle, setEditedTitle] = useState("");

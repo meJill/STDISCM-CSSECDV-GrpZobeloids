@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
-import useAuth from '../../hooks/useAuth';
+import useAuth from '../../hooks/useAuthWoN';
 import AuthService from "../../services/AuthService";
+import axios from "axios";
+import { useState } from "react";
 
 import classes from "./MainNavigationPage.module.css";
 
@@ -8,11 +10,33 @@ import classes from "./MainNavigationPage.module.css";
 
 function MainNavigationPage() {
   const authenticated = useAuth();
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
+  const pfp = async () => {
+    console.log(localStorage.getItem("username"));
+    let username = localStorage.getItem("username");
+    try {
+      const response = await axios.post("http://localhost:5000/getPhoto", {
+        username,
+      });
+      console.log(response.data.profile_photo);
+      const test = response.data.profile_photo;
+      const path = test;
+      setProfilePhotoUrl(path);
+    } catch (error) {}
+
+    return true;
+  };
+
   const handleLogout = () => {
     AuthService.logout();
   };
   return (
-    <header className={classes.header}>
+    <header className={classes.header} onLoad={pfp}>
+      {authenticated && (
+        <div>
+          {/* <img src={require(`../${profilePhotoUrl}`)} /> */}
+        </div>
+      )}
       <div className={classes.logo}> PersonaDex </div>
       <nav>
         <ul>

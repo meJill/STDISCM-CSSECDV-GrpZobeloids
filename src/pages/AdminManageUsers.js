@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import useAuth from '../hooks/useAuth';
 
 function AdminManageUsers() {
+  const authenticated = useAuth();
   const [users, setUsers] = useState([]);
   const [selectUserId, setSelectUserId] = useState(null); // State to track the user being selected
   const [selectedUsername, setSelectedUsername] = useState('');
