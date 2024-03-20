@@ -5,7 +5,6 @@ import classes from "./AdminLoginPage.module.css";
 import Card from "../components/ui/Card";
 import axios from "axios";
 import config from "../config";
-import AuthService from "../services/AuthService";
 
 function AdminLoginPage() {
   const [username, setUsername] = useState("");

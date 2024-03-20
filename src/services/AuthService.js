@@ -4,6 +4,7 @@ import { useState } from "react";
 class AuthService {
   isAuthenticated() {
     const isLoggedIn = this.loginCheck
+    if (!isLoggedIn) return false;
 
     const expirationTime = localStorage.getItem("expirationTime");
     if (!expirationTime) return false;

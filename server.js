@@ -1,6 +1,4 @@
 // server.js
-import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
-
 const express = require('express');
 const mysql = require('mysql2');
 
