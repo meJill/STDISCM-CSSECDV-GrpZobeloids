@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
+import ReCAPTCHA from "react-google-recaptcha"; 
 import classes from "./LoginPage.module.css";
 import Card from "../components/ui/Card";
 import axios from "axios";
@@ -15,18 +15,23 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [captchaCompleted, setCaptchaCompleted] = useState(true);
+  const [captchaToken, setCaptchaToken] = useState('');
+
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      if (!captchaCompleted) {
+      if (!captchaToken) {
         setError("Please complete the CAPTCHA.");
         return;
       }
+
       const response = await axios.post("http://localhost:5000/login", {
+        
         username,
         password,
+        captchaToken
+        
       });
       setError("");
       console.log("Login successful:", response.data);
@@ -53,9 +58,7 @@ function LoginPage() {
   };
 
   const handleCaptchaChange = (value) => {
-    if (value) {
-      setCaptchaCompleted(true);
-    }
+    setCaptchaToken(value); 
   };
 
   return (
@@ -95,7 +98,6 @@ function LoginPage() {
             <button
               type="submit"
               className={classes.login}
-              disabled={!captchaCompleted}
             >
               Login
             </button>
