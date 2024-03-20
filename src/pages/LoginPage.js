@@ -4,8 +4,7 @@ import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
 import classes from "./LoginPage.module.css";
 import Card from "../components/ui/Card";
 import axios from "axios";
-import config from "./config";
-import AuthService from "../services/AuthService";
+import config from "../config";
 
 function GotoSignup() {
   return <Link to="/signup-page">Sign Up</Link>;
@@ -28,6 +27,7 @@ function LoginPage() {
         username,
         password,
       });
+
       setError("");
       console.log("Login successful:", response.data);
 
@@ -35,6 +35,7 @@ function LoginPage() {
       const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
       localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("username", username);
+      localStorage.setItem("password", password)
       localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
       localStorage.setItem("expirationTime", expirationTime.toString());
 
@@ -43,7 +44,6 @@ function LoginPage() {
       // Your login logic
     } catch (error) {
       setError("Invalid username or password");
-      console.error("Login failed:", error);
     }
   };
 

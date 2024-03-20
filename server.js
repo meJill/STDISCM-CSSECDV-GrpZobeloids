@@ -1,4 +1,5 @@
 // server.js
+import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
 
 const express = require('express');
 const mysql = require('mysql2');
@@ -188,7 +189,7 @@ res.status(500).json({ error: 'Internal server error' });
 }
 });
 
-app.post('/loggedIn', async (req, res) => {
+app.post('/getPhoto', async (req, res) => {
   const {username} = req.body
   console.log(req.body)
   console.log({username})
@@ -204,6 +205,35 @@ app.post('/loggedIn', async (req, res) => {
   
 
   
+});
+
+app.post('/isLogin', async (req, res) => {
+  const { username, password } = req.body;
+
+  try {
+    // Fetch user from the database and make sure not to get deleted users
+    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
+
+    if (user.length === 1) {
+      // User exists, compare passwords
+      const hashedPassword = user[0].password;
+      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+      if (passwordMatch) {
+        // Passwords match, return success response
+        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo , user_id: user[0].user_id});
+      } else {
+        // Passwords do not match, return error response
+        res.status(401).json({ error: 'Invalid username or password' });
+      }
+    } else {
+      // No user found with provided username, return error response
+      res.status(401).json({ error: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 app.post('/login', async (req, res) => {

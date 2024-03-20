@@ -36,24 +36,18 @@ function HomePage() {
     console.log(localStorage.getItem("username"));
     let username = localStorage.getItem("username");
     try {
-      const response = await axios.post("http://localhost:5000/loggedIn", {
+      const response = await axios.post("http://localhost:5000/getPhoto", {
         username,
       });
       console.log(response.data.profile_photo);
       const test = response.data.profile_photo;
-      // const path = (require("../"+test))
       const path = test;
       setProfilePhotoUrl(path);
-      console.log(profilePhotoUrl);
     } catch (error) {}
 
     return true;
   };
   console.log(import.meta.url);
-
-  // localStorage.setItem("image", profilePhotoUrl)
-  // console.log(localStorage.getItem("image"))
-  // let wah = import(localStorage.getItem("image"))
 
   return (
     <div className="home-page" onLoad={IsLoggedIn}>
@@ -62,7 +56,6 @@ function HomePage() {
       {authenticated && (
         <div>
           <img src={require(`../${profilePhotoUrl}`)} />
-          {/* <img src={require("../images/db38a6120e0904ad3e387d2f2b96dbd0.png")}/> */}
         </div>
       )}
       <div className="posts-list">
