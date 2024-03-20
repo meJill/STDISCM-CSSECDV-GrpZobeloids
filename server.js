@@ -226,21 +226,23 @@ async function verifyRecaptchaToken(token) {
   }
 }
 
-app.post('/isLogin', async (req, res) => {
+
+
+app.post('/isLoginA', async (req, res) => {
   const { username, password } = req.body;
 
   try {
     // Fetch user from the database and make sure not to get deleted users
-    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
+    const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
 
     if (user.length === 1) {
       // User exists, compare passwords
-      const hashedPassword = user[0].password;
+      const hashedPassword = admin[0].password;
       const passwordMatch = await bcrypt.compare(password, hashedPassword);
 
       if (passwordMatch) {
         // Passwords match, return success response
-        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo , user_id: user[0].user_id});
+        res.status(200).json({ message: 'Login successful', user_id: admin[0].user_id});
       } else {
         // Passwords do not match, return error response
         res.status(401).json({ error: 'Invalid username or password' });
@@ -253,6 +255,46 @@ app.post('/isLogin', async (req, res) => {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
+});
+
+app.post('/loginA', async (req, res) => {
+  const { username, password, captchaToken } = req.body;
+
+
+  try {    
+    // Verify the reCAPTCHA token
+    const isRecaptchaVerified = await verifyRecaptchaToken(captchaToken);
+
+    if (!isRecaptchaVerified) {
+      console.log('reCAPTCHA verification failed');
+      return res.status(403).json({ error: 'reCAPTCHA verification failed' });
+    }
+
+
+    // Fetch admin from the database and make sure not to get deleted users
+    const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
+
+    if (admin.length === 1) {
+      // User exists, compare passwords
+      const hashedPassword = admin[0].password;
+      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+      if (passwordMatch) {
+        // Passwords match, return success response
+        res.status(200).json({ message: 'Login successful', user_id: admin[0].user_id});
+      } else {
+        // Passwords do not match, return error response
+        res.status(401).json({ error: 'Invalid username or password' });
+      }
+    } else {
+      // No user found with provided username, return error response
+      res.status(401).json({ error: 'Invalid username or password' });
+    }
+  } catch (error) {
+    console.error('Error logging in user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+
 });
 
 app.post('/login', async (req, res) => {
@@ -279,7 +321,7 @@ app.post('/login', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
-        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo , user_id: user[0].user_id});
+        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo_path , user_id: user[0].user_id});
       } else {
         // Passwords do not match, return error response
         res.status(401).json({ error: 'Invalid username or password' });

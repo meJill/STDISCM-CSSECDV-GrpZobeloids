@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import classes from "./ModulePage.module.css";
-import useAuth from '../hooks/useAuth';
+import useAuth from '../hooks/useAuthA';
 
 function AdminUserPage() {
   const authenticated = useAuth();

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import AuthService from '../services/AuthService';
 import { useNavigate } from "react-router-dom";
 
-function useAuth() {
+function useAuthA() {
   const [authenticated, setAuthenticated] = useState(AuthService.isAuthenticated());
   const navigate = useNavigate();
   useEffect(() => {
@@ -13,8 +13,7 @@ function useAuth() {
         setAuthenticated(false); // Update authentication state
         navigate('/login-page')
       } else {
-        const state = AuthService.isAuthenticated()
-        setAuthenticated(state);
+        setAuthenticated(AuthService.isAuthenticatedA());
       }
     }, 1000); // Check authentication status and session expiry every second
 
@@ -24,4 +23,4 @@ function useAuth() {
   return authenticated;
 }
 
-export default useAuth;
+export default useAuthA;

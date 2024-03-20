@@ -13,6 +13,33 @@ class AuthService {
     return now < parseInt(expirationTime, 10);
   }
 
+  isAuthenticatedA() {
+    const isLoggedIn = this.loginCheckA
+    if (!isLoggedIn) return false;
+
+    const expirationTime = localStorage.getItem("expirationTime");
+    if (!expirationTime) return false;
+
+    const now = new Date().getTime();
+    return now < parseInt(expirationTime, 10);
+  }
+
+  loginCheckA = async() => {
+    try {
+      const [username, setUsername] = useState('');
+      const [password, setPassword] = useState('');
+      setUsername(localStorage.getItem('username'));
+      setPassword(localStorage.getItem('password'));
+      const response = await axios.post("http://localhost:5000/isLoginA", {
+        username,
+        password,
+      });
+      return true
+    } catch (error) {
+      return false;
+    }
+  }
+
   loginCheck = async() => {
     try {
       const [username, setUsername] = useState('');

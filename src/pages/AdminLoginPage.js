@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha"; // Import ReCAPTCHA
 import classes from "./AdminLoginPage.module.css";
 import Card from "../components/ui/Card";
@@ -10,30 +10,30 @@ function AdminLoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [captchaCompleted, setCaptchaCompleted] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState('');
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      if (!captchaCompleted) {
+      if (!captchaToken) {
         setError("Please complete the CAPTCHA.");
         return;
       }
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await axios.post("http://localhost:5000/loginA", {
         username,
         password,
+        captchaToken
       });
       setError("");
       console.log("Login successful:", response.data);
 
       const now = new Date();
       const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
-      localStorage.setItem("isLoggedIn", "true");
       localStorage.setItem("username", username);
+      localStorage.setItem("password", password)
       localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
       localStorage.setItem("expirationTime", expirationTime.toString());
-
-      navigate("/");
+      navigate("/admin-manage-page");
 
       // Your login logic
     } catch (error) {
@@ -46,7 +46,7 @@ function AdminLoginPage() {
 
   const handleCaptchaChange = (value) => {
     if (value) {
-      setCaptchaCompleted(true);
+      setCaptchaToken(value); 
     }
   };
 
@@ -86,7 +86,6 @@ function AdminLoginPage() {
           <div className={classes.actions}>
             <button type="submit" className={classes.login}>
               {" "}
-              {/*disabled={!captchaCompleted}*/}
               Login
             </button>
           </div>

@@ -34,11 +34,11 @@ function LoginPage() {
       });
 
       setError("");
-      console.log("Login successful:", response.data);
+      console.log("Login successful:", response);
 
       const now = new Date();
       const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
-      localStorage.setItem("isLoggedIn", "true");
+      localStorage.setItem("pfp", response.data.profile_photo.slice(4).replace("\\", "/"))
       localStorage.setItem("username", username);
       localStorage.setItem("password", password)
       localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
