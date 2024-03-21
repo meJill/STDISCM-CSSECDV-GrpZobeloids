@@ -434,7 +434,7 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
       if (allowedExtensions.includes(ext)) {
         // Generate a unique filename to prevent conflicts
         const filename = `${Date.now()}${ext}`;
-        filePath = path.join(__dirname, 'src', 'user_post_uploads', filename); // Save file in src/user_post_uploads directory
+        filePath = path.join('src', 'user_post_uploads', filename); // Save file in src/user_post_uploads directory
         await fs.promises.rename(file.path, filePath); // Rename and move the file to the src/user_post_uploads directory
       } else {
         throw new Error('Invalid file type');
