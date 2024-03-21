@@ -15,7 +15,7 @@ function AdminManageUsers() {
     const fetchUsers = async () => {
       try {
         // Fetch all users from the backend
-        const response = await axios.get('http://localhost:5000/api/users');
+        const response = await axios.get('https://localhost:5000/api/users');
         setUsers(response.data.users);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -40,7 +40,7 @@ function AdminManageUsers() {
   const handleSaveEdit = async () => {
     try {
       // Make a request to update the user with the specified ID
-      const response = await axios.put(`http://localhost:5000/api/edit/users/${selectUserId}`, {
+      const response = await axios.put(`https://localhost:5000/api/edit/users/${selectUserId}`, {
         username: selectedUsername,
         email: selectedEmail
       });
@@ -74,7 +74,7 @@ function AdminManageUsers() {
     if (deleteConfirmationId === userId) {
       try {
         // Make a request to delete the user with the specified ID
-        const response = await axios.put(`http://localhost:5000/api/users/delete/${userId}`);
+        const response = await axios.put(`https://localhost:5000/api/users/delete/${userId}`);
         console.log(response.data.message); // Log success message
         // Remove the deleted user from the state
         setUsers(prevUsers => prevUsers.filter(user => user.user_id !== userId));

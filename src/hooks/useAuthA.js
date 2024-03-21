@@ -15,7 +15,7 @@ function useAuthA() {
       } else {
         setAuthenticated(AuthService.isAuthenticatedA());
       }
-    }, 1000); // Check authentication status and session expiry every second
+    }, 0); // Check authentication status and session expiry every second
 
     return () => clearInterval(intervalId); // Clean up the interval on unmount
   }, []);

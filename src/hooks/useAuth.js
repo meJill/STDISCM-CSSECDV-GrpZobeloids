@@ -16,7 +16,7 @@ function useAuth() {
         const state = AuthService.isAuthenticated()
         setAuthenticated(state);
       }
-    }, 1000); // Check authentication status and session expiry every second
+    }, 0); // Check authentication status and session expiry every second
 
     return () => clearInterval(intervalId); // Clean up the interval on unmount
   }, []);

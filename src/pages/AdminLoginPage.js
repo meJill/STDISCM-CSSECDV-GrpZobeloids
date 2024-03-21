@@ -19,7 +19,7 @@ function AdminLoginPage() {
         setError("Please complete the CAPTCHA.");
         return;
       }
-      const response = await axios.post("http://localhost:5000/loginA", {
+      const response = await axios.post("https://localhost:5000/loginA", {
         username,
         password,
         captchaToken
