@@ -418,6 +418,7 @@ app.post('/admin-login-page', async (req, res) => {
 });
 
 // Add a post with a file (if added) to the database
+
 app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
   const { title, body, user_id } = req.body;
   const file = req.file;
@@ -426,7 +427,18 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
     let filePath = null;
 
     if (file) {
-      filePath = file.path; // Get the path of the uploaded file
+      const ext = path.extname(file.originalname).toLowerCase(); // Get the file extension
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.pdf'];
+
+      // Check if the file extension is allowed
+      if (allowedExtensions.includes(ext)) {
+        // Generate a unique filename to prevent conflicts
+        const filename = `${Date.now()}${ext}`;
+        filePath = path.join(__dirname, 'src', 'user_post_uploads', filename); // Save file in src/user_post_uploads directory
+        await fs.promises.rename(file.path, filePath); // Rename and move the file to the src/user_post_uploads directory
+      } else {
+        throw new Error('Invalid file type');
+      }
     }
 
     // Insert the new post into the database
@@ -439,7 +451,7 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
   } catch (error) {
     console.error('Error adding user post:', error);
     res.status(500).json({ error: 'Internal server error' });
-    let filePath = file.path; // Get the path of the uploaded file
+
     // If an error occurs during the uploading process, delete the file
     if (file && filePath) {
       fs.unlink(filePath, (err) => {
