@@ -19,6 +19,60 @@ const httpsOptions = {
   cert: fs.readFileSync(path.join(__dirname, 'server.cert'))
 };
 
+// Log file paths
+const authLogPath = path.join('logs', 'auth.log');
+const transactionLogPath = path.join('logs', 'transaction.log');
+const adminLogPath = path.join('logs', 'admin.log');
+
+// Function to write logs
+const writeToLog = (logPath, message) => {
+  const logMessage = `[${new Date().toISOString()}] ${message}\n`;
+  fs.appendFile(logPath, logMessage, (err) => {
+    if (err) {
+      console.error(`Error writing to log file ${logPath}:`, err);
+    }
+  });
+};
+
+// Function to log messages related to database connection
+const logDatabaseConnection = (message) => {
+  writeToLog(transactionLogPath, message);
+};
+
+// Function to log error messages related to database
+const logDatabaseError = (error) => {
+  writeToLog(transactionLogPath, `Database Error: ${error}`);
+};
+
+// Function to log messages related to user registration
+const logUserRegistration = (message) => {
+  writeToLog(authLogPath, message);
+};
+
+// Function to log error messages related to user registration
+const logUserRegistrationError = (error) => {
+  writeToLog(authLogPath, `User Registration Error: ${error}`);
+};
+
+// Function to log messages related to admin login
+const logAdminLogin = (message) => {
+  writeToLog(adminLogPath, message);
+};
+
+// Function to log error messages related to admin login
+const logAdminLoginError = (error) => {
+  writeToLog(adminLogPath, `Admin Login Error: ${error}`);
+};
+
+// Function to log error messages related to user login
+const logUserLoginError = (error) => {
+  writeToLog(authLogPath, `User Login Error: ${error}`);
+};
+
+// Function to log successful user logins
+const logUserLogin = (username) => {
+  writeToLog(authLogPath, `User '${username}' logged in successfully`);
+};
 
 
 // Function to check if the database exists
@@ -188,8 +242,10 @@ app.post('/register', upload.single('photo'), async (req, res) => {
       [username, hashedPassword, email, pnumber, newPhotoFilePath]
     );
     const photoUrl = `${newPhotoFilePath}`;
+    logUserRegistration('User \'' + username + '\' added successfully');
     res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
   } catch (error) {
+  logUserRegistrationError(error.message);
 console.error('Error registering user:', error);
 res.status(500).json({ error: 'Internal server error' });
 }
@@ -339,6 +395,7 @@ app.post('/login', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
+        logUserLogin(username);
         res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo_path , user_id: user[0].user_id});
       } else {
         // Passwords do not match, return error response
@@ -350,6 +407,7 @@ app.post('/login', async (req, res) => {
     }
   } catch (error) {
     console.error('Error logging in user:', error);
+    logUserLoginError(error.message);
     res.status(500).json({ error: 'Internal server error' });
   }
 

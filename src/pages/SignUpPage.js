@@ -125,13 +125,7 @@ function SignUpPage() {
             <button className={classes.signup}> Sign Up </button>
           </div>
         </form>
-        {/* Display uploaded image if registration was successful */}
-        {signupSuccess && !error && (
-          <div>
-            <p>Profile Photo:</p>
-            <img /*onLoad="changeImage"*/ alt="Profile" />
-          </div>
-        )}
+
 
         {/* Error message */}
         {error && <p>{error}</p>}
