@@ -196,11 +196,19 @@ res.status(500).json({ error: 'Internal server error' });
 });
 
 app.post('/getPhoto', async (req, res) => {
-  const {username} = req.body
+  const {username, password} = req.body
   console.log(req.body)
   console.log({username})
   try {
     const [user] = await db.promise().query('SELECT profile_photo_path FROM users WHERE username = ?', [username]);
+
+    const hashedPassword = user[0].password;
+    const passwordMatch = await bcrypt.compare(password, hashedPassword);
+
+    if(!passwordMatch) {
+      res.status(401).json({ error: 'Login' })
+    }
+
     console.log(user[0]);
     const path = user[0]['profile_photo_path'].slice(4).replace("\\", "/")
     console.log(path)

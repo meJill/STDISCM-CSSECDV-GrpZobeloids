@@ -68,10 +68,7 @@ class AuthService {
   logout() {
     // Perform logout logic (if necessary)
     // Clear session information from localStorage
-    localStorage.removeItem("username");
-    localStorage.removeItem("password");
-    localStorage.removeItem("user_id");
-    localStorage.removeItem("expirationTime");
+    localStorage.clear()
   }
 }
 

@@ -6,12 +6,8 @@ import ManagePage from "./pages/ManagePage";
 import AddPage from "./pages/AddPage";
 import LoginPage from "./pages/LoginPage";
 import Layout from "./components/layout/Layout";
-import Admin from "./pages/AdminPage";
 import AdminLoginPage from "./pages/AdminLoginPage";
-import AddCharacterForm from "./components/actions/AddCharacterForm";
 import SignUpPage from "./pages/SignUpPage";
-import AdminManagePage from "./pages/AdminManagePage";
-import AdminUserPage from "./pages/AdminUserPage";
 
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminPage from "./pages/AdminPage";

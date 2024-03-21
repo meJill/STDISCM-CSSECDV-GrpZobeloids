@@ -31,8 +31,8 @@ function LoginPage() {
         
       });
 
-      setError("");
-      console.log("Login successful:", response);
+      // setError("");
+      // console.log("Login successful:", response);
 
       const now = new Date();
       const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
