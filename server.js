@@ -11,6 +11,7 @@ const upload = multer({ dest: 'src/images/' }); // Destination folder for upload
 const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
+const axios = require('axios');
 
 const https = require('https');
 const httpsOptions = {
@@ -265,7 +266,6 @@ app.post('/isLoginA', async (req, res) => {
 app.post('/loginA', async (req, res) => {
   const { username, password, captchaToken } = req.body;
 
-
   try {    
     // Verify the reCAPTCHA token
     const isRecaptchaVerified = await verifyRecaptchaToken(captchaToken);
@@ -304,7 +304,7 @@ app.post('/loginA', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { username, password, captchaToken } = req.body;
-
+  console.log(req.body)
 
   try {    
     // Verify the reCAPTCHA token
