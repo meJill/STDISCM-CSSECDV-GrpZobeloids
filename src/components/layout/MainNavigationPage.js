@@ -36,7 +36,7 @@ function MainNavigationPage() {
     <header className={classes.header}>
       {authenticated && pfp() &&(
         <div>
-          <img src={require(`../../${profilePhotoUrl}`)} />
+          <img src={require(`../../${profilePhotoUrl}`)} height="100" width="100" />
         </div>
       )}
       <div className={classes.logo}> PersonaDex </div>

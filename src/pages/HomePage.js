@@ -48,9 +48,9 @@ function HomePage() {
                 {/* Display file based on MIME type */}
                 {getMimeType(post.file_path) === 'image/jpeg' ||
                 getMimeType(post.file_path) === 'image/png' ? (
-                  <img src={post.file_path} alt="File" />
+                  <img src={require("../"+(post.file_path).slice(4).replace(/\\/g, "/"))} alt="File" />
                 ) : getMimeType(post.file_path) === 'application/pdf' ? (
-                  <embed src={post.file_path} type="application/pdf" width="500" height="600" />
+                  <embed src={require("../"+(post.file_path).slice(4).replace(/\\/g, "/"))} type="application/pdf" width="500" height="600" />
                 ) : (
                   <p>Unsupported file format</p>
                 )}
