@@ -13,36 +13,32 @@ function SignUpPage() {
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
 
-  const handleSignup = async (event) => {
-    event.preventDefault();
-
-    try {
-      // Create FormData object and append form data
-      const formData = new FormData();
-      formData.append("username", username);
-      formData.append("password", password);
-      formData.append("email", email);
-      formData.append("pnumber", pnumber);
-      formData.append("photo", photo); // Append photo file
-
-      // Send POST request with form data to /register endpoint
-      const response = await axios.post(
-        "http://localhost:5000/register",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-
-      // Reset error and set signup success
-      setError("");
-      setSignupSuccess(true);
-      let path = "../";
-      path.concat(response.data.profile_photo);
-      setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
-      console.log("Signup successful:", response.data.profile_photo);
+    const handleSignup = async (event) => {
+        event.preventDefault();
+    
+        try {
+            // Create FormData object and append form data
+            const formData = new FormData();
+            formData.append('username', username);
+            formData.append('password', password);
+            formData.append('email', email);
+            formData.append('pnumber', pnumber);
+            formData.append('photo', photo); // Append photo file
+    
+            // Send POST request with form data to /register endpoint
+            const response = await axios.post('https://localhost:5000/register', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+    
+            // Reset error and set signup success
+            setError('');
+            setSignupSuccess(true);
+            let path = '../'
+            path.concat(response.data.profile_photo)
+            setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
+            console.log('Signup successful:', response.data.profile_photo);
 
       console.log("Photo before upload:", photo);
 

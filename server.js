@@ -12,7 +12,12 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcrypt');
 
-const axios = require('axios');
+const https = require('https');
+const httpsOptions = {
+  key: fs.readFileSync(path.join(__dirname, 'server.key')),
+  cert: fs.readFileSync(path.join(__dirname, 'server.cert'))
+};
+
 
 
 // Function to check if the database exists
@@ -559,6 +564,6 @@ app.get('/api/data', (req, res) => {
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+https.createServer(httpsOptions, app).listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-}); 
+});

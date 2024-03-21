@@ -15,25 +15,21 @@ const Dummy_Data = [
 function HomePage() {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        // Fetch all posts from the backend
-        const response = await axios.get("http://localhost:5000/api/posts");
-        setPosts(response.data.posts);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      }
-    };
-
-    fetchPosts();
-  }, []);
-
-
-  return (
-    <div className="home-page">
-      <h1> Home </h1>
-      <DataList chars={Dummy_Data} />
+    useEffect(() => {
+        const fetchPosts = async () => {
+          try {
+            // Fetch all posts from the backend
+            const response = await axios.get('https://localhost:5000/api/posts');
+            setPosts(response.data.posts);
+          } catch (error) {
+            console.error('Error fetching posts:', error);
+          }
+        };
+    
+        fetchPosts();
+      }, []);
+    return (
+    <div className = "home-page">
       <div className="posts-list">
         <h1> Recent Posts: </h1> /* not sorted yet */
         {posts.map((post) => (
