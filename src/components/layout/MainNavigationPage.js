@@ -13,7 +13,6 @@ function MainNavigationPage() {
 
   const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
   const pfp = async () => {
-    // console.log(localStorage.getItem("username"));
     let username = localStorage.getItem("username");
     let password = localStorage.getItem("password")
     // console.log(username)
@@ -22,8 +21,8 @@ function MainNavigationPage() {
         username,
         password
       });
-      setProfilePhotoUrl(require("../"+response.data.profile_photo));
-      console.log(require("../"+response.data.profile_photo))
+      setProfilePhotoUrl(response.data.profile_photo);
+      console.log(profilePhotoUrl)
     } catch (error) {}
 
     return true;
@@ -35,10 +34,9 @@ function MainNavigationPage() {
 
   return (
     <header className={classes.header}>
-      {authenticated && pfp() && (
+      {authenticated && pfp() &&(
         <div>
-          {/* <img src={profilePhotoUrl} alt="pf" /> */}
-          <img src={require("../images/db38a6120e0904ad3e387d2f2b96dbd0.png")}/>
+          <img src={require(`../../${profilePhotoUrl}`)} />
         </div>
       )}
       <div className={classes.logo}> PersonaDex </div>

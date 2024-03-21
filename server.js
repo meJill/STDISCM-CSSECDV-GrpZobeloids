@@ -198,21 +198,26 @@ res.status(500).json({ error: 'Internal server error' });
 app.post('/getPhoto', async (req, res) => {
   const {username, password} = req.body
   console.log(req.body)
-  console.log({username})
   try {
-    const [user] = await db.promise().query('SELECT profile_photo_path FROM users WHERE username = ?', [username]);
+    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
 
-    const hashedPassword = user[0].password;
-    const passwordMatch = await bcrypt.compare(password, hashedPassword);
+    // console.log(user[0].password)
 
-    if(!passwordMatch) {
-      res.status(401).json({ error: 'Login' })
+    if (user.length === 1) {
+      // User exists, compare passwords
+      const hashedPassword = user[0].password;
+      const passwordMatch = await bcrypt.compare(password, hashedPassword);
+      if (!passwordMatch) {
+        // Passwords match, return success response
+        res.status(401).json({ error: 'Login' })
+      }
+      // console.log(user[0].profile_photo_path)
+      // console.log(user[0].profile_photo_path);
+      const path = user[0].profile_photo_path.slice(4).replace("\\", "/")
+      // console.log(path)
+      // console.log(path)
+      res.status(200).json({profile_photo: path});
     }
-
-    console.log(user[0]);
-    const path = user[0]['profile_photo_path'].slice(4).replace("\\", "/")
-    console.log(path)
-    res.status(200).json({profile_photo: path});
   } catch (error) {
     
   }
@@ -249,7 +254,7 @@ app.post('/isLoginA', async (req, res) => {
     // Fetch user from the database and make sure not to get deleted users
     const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
 
-    if (user.length === 1) {
+    if (admin.length === 1) {
       // User exists, compare passwords
       const hashedPassword = admin[0].password;
       const passwordMatch = await bcrypt.compare(password, hashedPassword);
