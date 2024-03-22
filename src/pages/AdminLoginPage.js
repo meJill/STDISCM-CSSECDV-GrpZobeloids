@@ -33,7 +33,7 @@ function AdminLoginPage() {
       localStorage.setItem("password", password)
       localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
       localStorage.setItem("expirationTime", expirationTime.toString());
-      navigate("/admin-manage-page");
+      navigate("/admin-manage-post");
 
       // Your login logic
     } catch (error) {

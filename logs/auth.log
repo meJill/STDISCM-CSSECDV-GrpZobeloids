@@ -6,3 +6,14 @@
 [2024-03-21T15:30:08.150Z] User 'zamn' added successfully
 [2024-03-21T15:30:32.708Z] User super logged in successfully
 [2024-03-21T15:31:42.370Z] User 'test' logged in successfully
+[2024-03-22T01:28:12.876Z] User Login Error: ReferenceError: error is not defined
+[2024-03-22T01:39:46.410Z] qwe Password does not match
+[2024-03-22T02:06:35.658Z] qwe successful login
+[2024-03-22T02:15:04.899Z] qwe successful login
+[2024-03-22T02:18:55.253Z] ReferenceError: logUserLoginError is not defined
+[2024-03-22T02:20:48.643Z] User 'grrr' added successfully
+[2024-03-22T02:21:05.032Z] reCAPTCHA verification response: 
+[2024-03-22T02:21:05.172Z] grrr successful login
+[2024-03-22T02:22:10.566Z] File input successful: pls log me in || Angerness || src\user_post_uploads\1711074130557.png
+[2024-03-22T03:01:02.336Z] reCAPTCHA verification response: 
+[2024-03-22T03:01:02.372Z] Error logging in user: ReferenceError: logUserLoginError is not defined

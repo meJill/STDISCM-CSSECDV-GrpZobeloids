@@ -35,43 +35,18 @@ const writeToLog = (logPath, message) => {
 };
 
 // Function to log messages related to database connection
-const logDatabaseConnection = (message) => {
+const logTransaction = (message) => {
   writeToLog(transactionLogPath, message);
 };
 
-// Function to log error messages related to database
-const logDatabaseError = (error) => {
-  writeToLog(transactionLogPath, `Database Error: ${error}`);
-};
-
 // Function to log messages related to user registration
-const logUserRegistration = (message) => {
+const logAuth = (message) => {
   writeToLog(authLogPath, message);
 };
 
-// Function to log error messages related to user registration
-const logUserRegistrationError = (error) => {
-  writeToLog(authLogPath, `User Registration Error: ${error}`);
-};
-
-// Function to log messages related to admin login
-const logAdminLogin = (message) => {
+// Function to log messages related to admin
+const logAdmin = (message) => {
   writeToLog(adminLogPath, message);
-};
-
-// Function to log error messages related to admin login
-const logAdminLoginError = (error) => {
-  writeToLog(adminLogPath, `Admin Login Error: ${error}`);
-};
-
-// Function to log error messages related to user login
-const logUserLoginError = (error) => {
-  writeToLog(authLogPath, `User Login Error: ${error}`);
-};
-
-// Function to log successful user logins
-const logUserLogin = (username) => {
-  writeToLog(authLogPath, `User '${username}' logged in successfully`);
 };
 
 
@@ -242,10 +217,10 @@ app.post('/register', upload.single('photo'), async (req, res) => {
       [username, hashedPassword, email, pnumber, newPhotoFilePath]
     );
     const photoUrl = `${newPhotoFilePath}`;
-    logUserRegistration('User \'' + username + '\' added successfully');
+    logAuth('User \'' + username + '\' added successfully');
     res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
   } catch (error) {
-  logUserRegistrationError(error.message);
+    logAuth('Authentication Error: ' + error);
 console.error('Error registering user:', error);
 res.status(500).json({ error: 'Internal server error' });
 }
@@ -291,11 +266,12 @@ async function verifyRecaptchaToken(token) {
         response: token,
       },
     });
-
+    logAuth('reCAPTCHA verification response: ', response.data)
     console.log('reCAPTCHA verification response:', response.data);
 
     return response.data.success;
   } catch (error) {
+    logAuth('Error verifying reCAPTCHA token:', error)
     console.error('Error verifying reCAPTCHA token:', error);
     return false;
   }
@@ -317,17 +293,21 @@ app.post('/isLoginA', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
+        // logAdmin("/'" + username + "\' still logged in")
         res.status(200).json({ message: 'Login successful', user_id: admin[0].user_id});
       } else {
         // Passwords do not match, return error response
-        res.status(401).json({ error: 'Invalid username or password' });
+        logAdmin(username + ": Password does not match");
+        res.status(401).json({ error: 'Invalid username or password or accessing unauthorized pages' });
       }
     } else {
       // No user found with provided username, return error response
-      res.status(401).json({ error: 'Invalid username or password' });
+      logAdmin("User \'" + username + "\' not found");
+      res.status(401).json({ error: 'Invalid username or password or accessing unauthorized pages' });
     }
   } catch (error) {
-    console.error('Error logging in user:', error);
+    logAdmin(error)
+    console.error('Accessing unauthorized pages: ', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -355,16 +335,20 @@ app.post('/loginA', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
+        logAdmin("/'" + username + "\' successful login")
         res.status(200).json({ message: 'Login successful', user_id: admin[0].user_id});
       } else {
         // Passwords do not match, return error response
+        logAdmin("/'" + username + "\' password does not match")
         res.status(401).json({ error: 'Invalid username or password' });
       }
     } else {
       // No user found with provided username, return error response
+      logAdmin("\'" + username + "\' does not exist")
       res.status(401).json({ error: 'Invalid username or password' });
     }
   } catch (error) {
+    logAdmin('Error logging in user:', error)
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -395,19 +379,21 @@ app.post('/login', async (req, res) => {
 
       if (passwordMatch) {
         // Passwords match, return success response
-        logUserLogin(username);
+        logAuth(username + " successful login");
         res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo_path , user_id: user[0].user_id});
       } else {
         // Passwords do not match, return error response
+        logAuth("\'" + username + "\' Password does not match");
         res.status(401).json({ error: 'Invalid username or password' });
       }
     } else {
       // No user found with provided username, return error response
+      logUserLoginError("\'" + username  + "\' not found");
       res.status(401).json({ error: 'Invalid username or password' });
     }
   } catch (error) {
     console.error('Error logging in user:', error);
-    logUserLoginError(error.message);
+    logAuth('Error logging in user: ' + error);
     res.status(500).json({ error: 'Internal server error' });
   }
 
@@ -495,6 +481,7 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
         filePath = path.join('src', 'user_post_uploads', filename); // Save file in src/user_post_uploads directory
         await fs.promises.rename(file.path, filePath); // Rename and move the file to the src/user_post_uploads directory
       } else {
+        logTransaction("Error adding post \'" + title + "\': Invalid file type " + file)
         throw new Error('Invalid file type');
       }
     }
@@ -504,9 +491,10 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
       'INSERT INTO user_posts (title, body, file_path, user_id) VALUES (?, ?, ?, ?)',
       [title, body, filePath, user_id]
     );
-
+    logTransaction("File input successful: " + title + " || " + body + " || " + filePath)
     res.status(201).json({ message: 'User post added successfully' });
   } catch (error) {
+    logTransaction('Error adding user post:', error);
     console.error('Error adding user post:', error);
     res.status(500).json({ error: 'Internal server error' });
 
@@ -528,9 +516,11 @@ app.get('/api/posts', async (req, res) => {
   try {
     // Fetch all posts from the database
     const [posts] = await db.promise().query('SELECT * FROM user_posts');
+    logTransaction('Fetched all posts');
     res.json({ posts });
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching all posts:', error);
+    logTransaction('Error fetching all posts: ' + error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -545,10 +535,11 @@ app.get('/api/posts/:user_id', async (req, res) => {
       'SELECT * FROM user_posts WHERE user_id = ?',
       [user_id]
     );
-
+    logTransaction('Fetched all posts by user_id: '+ user_id);
     res.json({ posts });
   } catch (error) {
     console.error('Error fetching posts:', error);
+    logTransaction('Error fetching posts from user_id: ' + user_id + ' Error code: ', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -564,10 +555,11 @@ app.put('/api/posts/:post_id', async (req, res) => {
       'UPDATE user_posts SET title = ?, body = ? WHERE post_id = ?',
       [title, body, post_id]
     );
-
+    logTransaction('Post id: ' + post_id + ' updated successfully');
     res.status(200).json({ message: 'Post updated successfully' });
   } catch (error) {
     console.error('Error updating post:', error);
+    logTransaction('Error updating post' + error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -579,9 +571,10 @@ app.delete('/api/posts/:post_id', async (req, res) => {
   try {
     // Delete the post from the database based on the post_id
     await db.promise().query('DELETE FROM user_posts WHERE post_id = ?', [post_id]);
-
+    logTransaction('Post id: '+ post_id + ' deleted successfully')
     res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
+    logTransaction('Error deleting post: ' + error)
     console.error('Error deleting post:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -592,9 +585,11 @@ app.get('/api/users', async (req, res) => {
   try {
     // Fetch all posts from the database
     const [users] = await db.promise().query('SELECT * FROM users WHERE deleted_at IS NULL');
+    logAdmin('Fetched all users');
     res.json({ users });
   } catch (error) {
     console.error('Error fetching users:', error);
+    logAdmin('Error fetching users:' + error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -602,17 +597,18 @@ app.get('/api/users', async (req, res) => {
 // Route to edit a user by its ID
 app.put('/api/users/edit/:user_id', async (req, res) => {
   const user_id = req.params.user_id;
-  const { username, email } = req.body;
+  const { username, email, phone_no } = req.body;
 
   try {
     // Update the user in the database based on the user_id
     await db.promise().query(
-      'UPDATE users SET username = ?, email = ? WHERE user_id = ?',
-      [username, email, user_id]
+      'UPDATE users SET username = ?, email = ?, phone_no = ?, WHERE user_id = ?',
+      [username, email, phone_no, user_id]
     );
-
+    logTransaction("\'" + user_id + "\' succesful update: " + username + " || " + email + " || " + phone_no) 
     res.status(200).json({ message: 'User updated successfully' });
   } catch (error) {
+    logTransaction("Error updating \'" + user_id + "\': " + error)
     console.error('Error updating user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
@@ -626,10 +622,11 @@ app.put('/api/users/delete/:user_id', async (req, res) => {
   try {
     // Delete the user from the database based on the user_id
     await db.promise().query('UPDATE users SET deleted_at = ? WHERE user_id = ?', [date, user_id]);
-
+    logAdmin("\'" + user_id + "\' successfully deleted")
     res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
     console.error('Error deleting user:', error);
+    logAdmin("\'" + user_id + "\' error deleting user: " + error)
     res.status(500).json({ error: 'Internal server error' });
   }
 });
