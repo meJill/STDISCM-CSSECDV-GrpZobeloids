@@ -35,7 +35,7 @@ function LoginPage() {
       // console.log("Login successful:", response);
 
       const now = new Date();
-      const expirationTime = now.getTime() + 1000 * 1000; // 1 hour expiry time
+      const expirationTime = now.getTime() + 10 * 1000; // 1 hour expiry time
       localStorage.setItem("pfp", response.data.profile_photo.slice(4).replace("\\", "/"))
       localStorage.setItem("username", username);
       localStorage.setItem("password", password)

@@ -17,3 +17,21 @@
 [2024-03-22T02:22:10.566Z] File input successful: pls log me in || Angerness || src\user_post_uploads\1711074130557.png
 [2024-03-22T03:01:02.336Z] reCAPTCHA verification response: 
 [2024-03-22T03:01:02.372Z] Error logging in user: ReferenceError: logUserLoginError is not defined
+[2024-03-22T03:27:21.973Z] User 'MantuaPogi' added successfully
+[2024-03-22T03:27:38.467Z] reCAPTCHA verification response: 
+[2024-03-22T03:27:38.602Z] MantuaPogi successful login
+[2024-03-22T03:42:49.722Z] reCAPTCHA verification response: 
+[2024-03-22T03:42:49.857Z] 'MantuaPogi' Password does not match
+[2024-03-22T03:42:59.012Z] reCAPTCHA verification response: 
+[2024-03-22T03:43:11.049Z] reCAPTCHA verification response: 
+[2024-03-22T03:43:39.090Z] reCAPTCHA verification response: 
+[2024-03-22T03:43:39.228Z] qwe successful login
+[2024-03-22T03:44:21.835Z] reCAPTCHA verification response: 
+[2024-03-22T03:44:21.970Z] qwe successful login
+[2024-03-22T03:44:51.270Z] reCAPTCHA verification response: 
+[2024-03-22T03:44:51.401Z] qwe successful login
+[2024-03-22T03:47:29.818Z] reCAPTCHA verification response: [object Object]
+[2024-03-22T03:47:29.964Z] qwe successful login
+[2024-03-22T03:48:32.106Z] reCAPTCHA verification response: [object Object]
+[2024-03-22T03:48:32.233Z] qwe successful login
+[2024-03-22T03:50:12.918Z] reCAPTCHA verification response: true

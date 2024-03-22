@@ -266,12 +266,12 @@ async function verifyRecaptchaToken(token) {
         response: token,
       },
     });
-    logAuth('reCAPTCHA verification response: ', response.data)
+    logAuth('reCAPTCHA verification response: '+ response.data.success)
     console.log('reCAPTCHA verification response:', response.data);
 
     return response.data.success;
   } catch (error) {
-    logAuth('Error verifying reCAPTCHA token:', error)
+    logAuth('Error verifying reCAPTCHA token:'+ response.data.error)
     console.error('Error verifying reCAPTCHA token:', error);
     return false;
   }
