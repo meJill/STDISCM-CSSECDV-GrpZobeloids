@@ -11,6 +11,7 @@ function HomePage() {
         // Fetch all posts from the backend
         const response = await axios.get(`https://${config.fip}:5000/api/posts`);
         setPosts(response.data.posts);
+        console.log(response.data.posts)
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -20,7 +21,8 @@ function HomePage() {
       try {
         // Fetch all posts from the backend
         const response = await axios.get(`https://${config.dip}:5000/api/posts`);
-        setPosts(response.data.posts);
+        let test = (response.data.posts).concat(posts)
+        setPosts(test);
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
