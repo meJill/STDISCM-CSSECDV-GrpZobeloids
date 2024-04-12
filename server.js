@@ -257,25 +257,7 @@ app.post('/getPhoto', async (req, res) => {
   
 });
 
-// Function to verify reCAPTCHA token
-async function verifyRecaptchaToken(token) {
-  try {
-    const response = await axios.post('https://www.google.com/recaptcha/api/siteverify', null, {
-      params: {
-        secret: config.google_private_key,
-        response: token,
-      },
-    });
-    logAuth('reCAPTCHA verification response: '+ response.data.success)
-    console.log('reCAPTCHA verification response:', response.data);
 
-    return response.data.success;
-  } catch (error) {
-    logAuth('Error verifying reCAPTCHA token:'+ response.data.error)
-    console.error('Error verifying reCAPTCHA token:', error);
-    return false;
-  }
-}
 
 
 
@@ -313,18 +295,9 @@ app.post('/isLoginA', async (req, res) => {
 });
 
 app.post('/loginA', async (req, res) => {
-  const { username, password, captchaToken } = req.body;
+  const { username, password } = req.body;
 
   try {    
-    // Verify the reCAPTCHA token
-    const isRecaptchaVerified = await verifyRecaptchaToken(captchaToken);
-
-    if (!isRecaptchaVerified) {
-      console.log('reCAPTCHA verification failed');
-      return res.status(403).json({ error: 'reCAPTCHA verification failed' });
-    }
-
-
     // Fetch admin from the database and make sure not to get deleted users
     const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
 
@@ -352,23 +325,13 @@ app.post('/loginA', async (req, res) => {
     console.error('Error logging in user:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-
 });
 
 app.post('/login', async (req, res) => {
-  const { username, password, captchaToken } = req.body;
+  const { username, password } = req.body;
   console.log(req.body)
 
   try {    
-    // Verify the reCAPTCHA token
-    const isRecaptchaVerified = await verifyRecaptchaToken(captchaToken);
-
-    if (!isRecaptchaVerified) {
-      console.log('reCAPTCHA verification failed');
-      return res.status(403).json({ error: 'reCAPTCHA verification failed' });
-    }
-
-
     // Fetch user from the database and make sure not to get deleted users
     const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
 
@@ -396,7 +359,6 @@ app.post('/login', async (req, res) => {
     logAuth('Error logging in user: ' + error);
     res.status(500).json({ error: 'Internal server error' });
   }
-
 });
 
 // GET user by ID

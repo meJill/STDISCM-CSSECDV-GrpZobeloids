@@ -85,13 +85,6 @@ function LoginPage() {
             />
           </div>
           {error && <p className={classes.error}>{error}</p>}
-          {/* Add ReCAPTCHA component */}
-          <div className={classes.captcha}>
-            <ReCAPTCHA
-              sitekey={config.google_site_key}
-              onChange={handleCaptchaChange}
-            />
-          </div>
           <div className={classes.actions}>
             <button
               type="submit"
