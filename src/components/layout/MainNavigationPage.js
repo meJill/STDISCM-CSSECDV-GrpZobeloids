@@ -19,11 +19,20 @@ function MainNavigationPage() {
     // console.log(username)
     // if statement here
     try {
-      const response = await axios.post(`https://${config.fip}:5000/getPhoto`, {
-        username,
-        password
-      });
-      setProfilePhotoUrl(response.data.profile_photo);
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.post(`https://${config.fip}:5000/getPhoto`, {
+          username,
+          password
+        });
+        setProfilePhotoUrl(response.data.profile_photo);
+      } else {
+        const response = await axios.post(`https://${config.dip}:5000/getPhoto`, {
+          username,
+          password
+        });
+        setProfilePhotoUrl(response.data.profile_photo);
+      }
+      
       console.log(profilePhotoUrl)
     } catch (error) {}
 

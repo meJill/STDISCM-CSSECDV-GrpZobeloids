@@ -34,21 +34,25 @@ function SignUpPage() {
                       'Content-Type': 'multipart/form-data'
                   }
               });
-              console.log("hi")
+              setSignupSuccess(true);
+              let path = '../'
+              path.concat(response.data.profile_photo)
+              setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
+                
             } else {
               const response = await axios.post(`https://${config.dip}:5000/register`, formData, {
                   headers: {
                       'Content-Type': 'multipart/form-data'
                   }
               });
+              setSignupSuccess(true);
+              let path = '../'
+              path.concat(response.data.profile_photo)
+              setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
             }
     
             // Reset error and set signup success
             setError('');
-            setSignupSuccess(true);
-            let path = '../'
-            path.concat(response.data.profile_photo)
-            setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
             console.log('Signup successful:', response.data.profile_photo);
 
       console.log("Photo before upload:", photo);

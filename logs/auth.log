@@ -83,3 +83,7 @@
 [2024-04-12T14:43:02.349Z] Error logging in user: ReferenceError: logUserLoginError is not defined
 [2024-04-12T14:43:07.017Z] Error logging in user: ReferenceError: logUserLoginError is not defined
 [2024-04-12T14:43:17.828Z] awkw successful login
+[2024-04-12T15:26:49.484Z] User 'qwe' added successfully
+[2024-04-12T15:27:04.194Z] qwe successful login
+[2024-04-12T15:27:23.513Z] qwe successful login
+[2024-04-12T15:30:41.980Z] qwe successful login

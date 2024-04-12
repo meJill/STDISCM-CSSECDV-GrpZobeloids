@@ -20,12 +20,22 @@ function EditUserPage() {
         if (!user_id) {
           throw new Error('User ID not found in local storage');
         }
-        const response = await axios.get(`https://${config.fip}:5000/api/users/${user_id}`);
-        const userData = response.data.user[0];
-        setUser(userData);
-        setEditedUsername(userData.username || '');
-        setEditedEmail(userData.email || '');
-        setEditedPhoneNo(userData.phone_no || '');
+        let username = localStorage.getItem('username')
+        if ((/^[a-m]/).test(username[0].toLowerCase())) {
+          const response = await axios.get(`https://${config.fip}:5000/api/users/${user_id}`);
+          const userData = response.data.user[0];
+          setUser(userData);
+          setEditedUsername(userData.username || '');
+          setEditedEmail(userData.email || '');
+          setEditedPhoneNo(userData.phone_no || '');
+        } else {
+          const response = await axios.get(`https://${config.dip}:5000/api/users/${user_id}`);
+          const userData = response.data.user[0];
+          setUser(userData);
+          setEditedUsername(userData.username || '');
+          setEditedEmail(userData.email || '');
+          setEditedPhoneNo(userData.phone_no || '');
+        }
       } catch (error) {
         console.error('Error fetching user:', error);
       }
@@ -36,15 +46,28 @@ function EditUserPage() {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await axios.put(`https://${config.fip}:5000/api/users/${user.user_id}`, {
-        username: editedUsername,
-        email: editedEmail,
-        phone_no: editedPhoneNo
-      });
-      console.log(response.data.message); // Log success message
-      // Update user state with edited values
-      const updatedUser = { ...user, username: editedUsername, email: editedEmail, phone_no: editedPhoneNo };
-      setUser(updatedUser);
+      let username = localStorage.getItem('username')
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.put(`https://${config.fip}:5000/api/users/${user.user_id}`, {
+          username: editedUsername,
+          email: editedEmail,
+          phone_no: editedPhoneNo
+        });
+        console.log(response.data.message); // Log success message
+        // Update user state with edited values
+        const updatedUser = { ...user, username: editedUsername, email: editedEmail, phone_no: editedPhoneNo };
+        setUser(updatedUser);
+      } else {
+        const response = await axios.put(`https://${config.dip}:5000/api/users/${user.user_id}`, {
+          username: editedUsername,
+          email: editedEmail,
+          phone_no: editedPhoneNo
+        });
+        console.log(response.data.message); // Log success message
+        // Update user state with edited values
+        const updatedUser = { ...user, username: editedUsername, email: editedEmail, phone_no: editedPhoneNo };
+        setUser(updatedUser);
+      }
     } catch (error) {
       console.error('Error updating user:', error);
     }

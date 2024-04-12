@@ -31,10 +31,17 @@ class AuthService {
       const [password, setPassword] = useState('');
       setUsername(localStorage.getItem('username'));
       setPassword(localStorage.getItem('password'));
-      const response = await axios.post(`https://${config.fip}:5000/isLoginA`, {
-        username,
-        password,
-      });
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.post(`https://${config.fip}:5000/isLoginA`, {
+          username,
+          password,
+        });
+      } else {
+        const response = await axios.post(`https://${config.dip}:5000/isLoginA`, {
+          username,
+          password,
+        });
+      }
       return true
     } catch (error) {
       return false;
@@ -47,10 +54,17 @@ class AuthService {
       const [password, setPassword] = useState('');
       setUsername(localStorage.getItem('username'));
       setPassword(localStorage.getItem('password'));
-      const response = await axios.post(`https://${config.fip}:5000/isLogin`, {
-        username,
-        password,
-      });
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.post(`https://${config.fip}:5000/isLogin`, {
+          username,
+          password,
+        });
+      } else {
+        const response = await axios.post(`https://${config.dip}:5000/isLogin`, {
+          username,
+          password,
+        });
+      }
       return true
     } catch (error) {
       return false;

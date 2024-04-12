@@ -23,8 +23,14 @@ function ManagePage() {
         }
         
         // Make sure to specify the full URL of your backend server
-        const response = await axios.get(`https://${config.fip}:5000/api/posts/${user_id}`);
-        setPosts(response.data.posts);
+        let username = localStorage.getItem('username')
+        if ((/^[a-m]/).test(username[0].toLowerCase())) {
+          const response = await axios.get(`https://${config.fip}:5000/api/posts/${user_id}`);
+          setPosts(response.data.posts);
+        } else {
+          const response = await axios.get(`https://${config.dip}:5000/api/posts/${user_id}`);
+          setPosts(response.data.posts);
+        }
       } catch (error) {
         console.error('Error fetching posts:', error);
       }
@@ -48,11 +54,20 @@ function ManagePage() {
   const handleSaveEdit = async () => {
     try {
       // Make a request to update the post with the specified ID
-      const response = await axios.put(`https://${config.fip}:5000/api/posts/${editPostId}`, {
-        title: editedTitle,
-        body: editedBody
-      });
-      console.log(response.data.message); // Log success message
+      let username = localStorage.getItem('username')
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.put(`https://${config.fip}:5000/api/posts/${editPostId}`, {
+          title: editedTitle,
+          body: editedBody
+        });
+        console.log(response.data.message); // Log success message
+      } else {
+        const response = await axios.put(`https://${config.dip}:5000/api/posts/${editPostId}`, {
+          title: editedTitle,
+          body: editedBody
+        });
+        console.log(response.data.message); // Log success message
+      }
 
       // Update the post in the state
       setPosts(prevPosts =>
@@ -82,12 +97,22 @@ function ManagePage() {
     if (deleteConfirmationId === postId) {
       try {
         // Make a request to delete the post with the specified ID
-        const response = await axios.delete(`https://${config.fip}:5000/api/posts/${postId}`);
-        console.log(response.data.message); // Log success message
-        // Remove the deleted post from the state
-        setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
-        setDeleteConfirmationId(null); // Clear the postId for deletion confirmation
-        setDeleteConfirmation(false); // Hide the confirmation dialog
+        let username = localStorage.getItem('username')
+        if ((/^[a-m]/).test(username[0].toLowerCase())) {
+          const response = await axios.delete(`https://${config.fip}:5000/api/posts/${postId}`);
+          console.log(response.data.message); // Log success message
+          // Remove the deleted post from the state
+          setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
+          setDeleteConfirmationId(null); // Clear the postId for deletion confirmation
+          setDeleteConfirmation(false); // Hide the confirmation dialog
+        } else {
+          const response = await axios.delete(`https://${config.dip}:5000/api/posts/${postId}`);
+          console.log(response.data.message); // Log success message
+          // Remove the deleted post from the state
+          setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
+          setDeleteConfirmationId(null); // Clear the postId for deletion confirmation
+          setDeleteConfirmation(false); // Hide the confirmation dialog
+        }
       } catch (error) {
         console.error('Error deleting post:', error);
       }

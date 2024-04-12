@@ -37,13 +37,20 @@ function AddCharacterForm() {
       if (file) {
         formData.append('file', file);
       }
-      
-      
-      const response = await axios.post(`https://${config.fip}:5000/api/addUserPost`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data' // Set proper headers for FormData
-        }
-      });
+      let username = localStorage.getItem('username')
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.post(`https://${config.fip}:5000/api/addUserPost`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Set proper headers for FormData
+          }
+        });
+      } else {
+        const response = await axios.post(`https://${config.dip}:5000/api/addUserPost`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data' // Set proper headers for FormData
+          }
+        });
+      }
   
   
       // Reset the form fields
