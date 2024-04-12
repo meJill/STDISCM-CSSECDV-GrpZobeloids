@@ -347,12 +347,12 @@ app.post('/login', async (req, res) => {
       } else {
         // Passwords do not match, return error response
         logAuth("\'" + username + "\' Password does not match");
-        res.status(401).json({ error: 'Invalid username or password' });
+        res.status(401).json({ error: 'EEE Invalid username or password' });
       }
     } else {
       // No user found with provided username, return error response
       logUserLoginError("\'" + username  + "\' not found");
-      res.status(401).json({ error: 'Invalid username or password' });
+      res.status(401).json({ error: 'AAA Invalid username or password' });
     }
   } catch (error) {
     console.error('Error logging in user:', error);

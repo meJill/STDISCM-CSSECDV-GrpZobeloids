@@ -27,11 +27,21 @@ function SignUpPage() {
             formData.append('photo', photo); // Append photo file
     
             // Send POST request with form data to /register endpoint
-            const response = await axios.post(`https://${config.fip}:5000/register`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
+            const response = ""
+            if ((/^[a-m]/).test(username[0].toLowerCase())) {
+              const response = await axios.post(`https://${config.fip}:5000/register`, formData, {
+                  headers: {
+                      'Content-Type': 'multipart/form-data'
+                  }
+              });
+              console.log("hi")
+            } else {
+              const response = await axios.post(`https://${config.dip}:5000/register`, formData, {
+                  headers: {
+                      'Content-Type': 'multipart/form-data'
+                  }
+              });
+            }
     
             // Reset error and set signup success
             setError('');

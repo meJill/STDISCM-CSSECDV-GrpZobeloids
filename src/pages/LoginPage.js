@@ -24,29 +24,43 @@ function LoginPage() {
       //   setError("Please complete the CAPTCHA.");
       //   return;
       // }
-      const response = await axios.post(`https://${config.fip}:5000/login`, {
-        username,
-        password
-        // captchaToken
-        
-      });
-
-      // setError("");
-      // console.log("Login successful:", response);
-
       const now = new Date();
       const expirationTime = now.getTime() + 500 * 1000; // 1 hour expiry time
-      localStorage.setItem("pfp", response.data.profile_photo.slice(4).replace("\\", "/"))
-      localStorage.setItem("username", username);
-      localStorage.setItem("password", password)
-      localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
-      localStorage.setItem("expirationTime", expirationTime.toString());
+      if ((/^[a-m]/).test(username[0].toLowerCase())) {
+        const response = await axios.post(`https://${config.fip}:5000/login`, {
+          username,
+          password
+
+          
+          // captchaToken
+      
+        });
+        localStorage.setItem("pfp", response.data.profile_photo.slice(4).replace("\\", "/"))
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password)
+        localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
+        localStorage.setItem("expirationTime", expirationTime.toString());
+      } else {
+        const response = await axios.post(`https://${config.dip}:5000/login`, {
+          username,
+          password
+          // captchaToken
+      
+        });
+        localStorage.setItem("pfp", response.data.profile_photo.slice(4).replace("\\", "/"))
+        localStorage.setItem("username", username);
+        localStorage.setItem("password", password)
+        localStorage.setItem("user_id", response.data.user_id); // Set user_id from response
+        localStorage.setItem("expirationTime", expirationTime.toString());
+      }
+      // setError("");
+      // console.log("Login successful:", response);
 
       navigate("/");
 
       // Your login logic
     } catch (error) {
-      setError("Invalid username or password");
+      setError(`${error}`);
     }
   };
 

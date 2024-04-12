@@ -16,7 +16,18 @@ function HomePage() {
       }
     };
 
+    const fetchPosts2 = async () => {
+      try {
+        // Fetch all posts from the backend
+        const response = await axios.get(`https://${config.dip}:5000/api/posts`);
+        setPosts(response.data.posts);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      }
+    };
+    
     fetchPosts();
+    fetchPosts2();
   }, []);
 
   // Function to determine MIME type based on file extension
