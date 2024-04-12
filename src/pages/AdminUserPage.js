@@ -23,7 +23,7 @@ function AdminUserPage() {
 
         // Make sure to specify the full URL of your backend server
         const response = await axios.get(
-          `https://localhost:5000/api/posts/${user_id}`
+          `InsertIPHERE:5000/api/posts/${user_id}`
         );
         setPosts(response.data.posts);
       } catch (error) {
@@ -50,7 +50,7 @@ function AdminUserPage() {
     try {
       // Make a request to update the post with the specified ID
       const response = await axios.put(
-        `https://localhost:5000/api/posts/${editPostId}`,
+        `InsertIPHERE:5000/api/posts/${editPostId}`,
         {
           title: editedTitle,
           body: editedBody,
@@ -89,7 +89,7 @@ function AdminUserPage() {
       try {
         // Make a request to delete the post with the specified ID
         const response = await axios.delete(
-          `https://localhost:5000/api/posts/${postId}`
+          `InsertIPHERE:5000/api/posts/${postId}`
         );
         console.log(response.data.message); // Log success message
         // Remove the deleted post from the state

@@ -30,7 +30,7 @@ class AuthService {
       const [password, setPassword] = useState('');
       setUsername(localStorage.getItem('username'));
       setPassword(localStorage.getItem('password'));
-      const response = await axios.post("https://localhost:5000/isLoginA", {
+      const response = await axios.post("InsertIPHERE:5000/isLoginA", {
         username,
         password,
       });
@@ -46,7 +46,7 @@ class AuthService {
       const [password, setPassword] = useState('');
       setUsername(localStorage.getItem('username'));
       setPassword(localStorage.getItem('password'));
-      const response = await axios.post("https://localhost:5000/isLogin", {
+      const response = await axios.post("InsertIPHERE:5000/isLogin", {
         username,
         password,
       });

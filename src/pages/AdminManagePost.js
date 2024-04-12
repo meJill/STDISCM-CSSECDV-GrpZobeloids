@@ -15,7 +15,7 @@ function AdminManagePost() {
     const fetchPosts = async () => {
       try {
         // Fetch all posts from the backend
-          const response = await axios.get('https://localhost:5000/api/posts');
+          const response = await axios.get('InsertIPHERE:5000/api/posts');
           setPosts(response.data.posts);
         }
       catch (error) {
@@ -42,7 +42,7 @@ function AdminManagePost() {
   const handleSaveEdit = async () => {
     try {
       // Make a request to update the post with the specified ID
-      const response = await axios.put(`https://localhost:5000/api/posts/${editPostId}`, {
+      const response = await axios.put(`InsertIPHERE:5000/api/posts/${editPostId}`, {
         title: editedTitle,
         body: editedBody
       });
@@ -76,7 +76,7 @@ function AdminManagePost() {
     if (deleteConfirmationId === postId) {
       try {
         // Make a request to delete the post with the specified ID
-        const response = await axios.delete(`https://localhost:5000/api/posts/${postId}`);
+        const response = await axios.delete(`InsertIPHERE:5000/api/posts/${postId}`);
         console.log(response.data.message); // Log success message
         // Remove the deleted post from the state
         setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));
