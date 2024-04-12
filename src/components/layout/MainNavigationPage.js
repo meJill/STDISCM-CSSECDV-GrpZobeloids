@@ -3,6 +3,7 @@ import useAuth from '../../hooks/useAuthWoN';
 import AuthService from "../../services/AuthService";
 import { useState } from "react";
 import axios from "axios";
+import config from "../../config";
 
 import classes from "./MainNavigationPage.module.css";
 
@@ -18,7 +19,7 @@ function MainNavigationPage() {
     // console.log(username)
     // if statement here
     try {
-      const response = await axios.post("InsertIPHERE:5000/getPhoto", {
+      const response = await axios.post(`https://${config.fip}:5000/getPhoto`, {
         username,
         password
       });

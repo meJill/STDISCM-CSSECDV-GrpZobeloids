@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 import classes from './ModulePage.module.css';
+import config from "../config";
 
 function ManagePage() {
   const authenticated = useAuth();
@@ -22,7 +23,7 @@ function ManagePage() {
         }
         
         // Make sure to specify the full URL of your backend server
-        const response = await axios.get(`InsertIPHERE:5000/api/posts/${user_id}`);
+        const response = await axios.get(`https://${config.fip}:5000/api/posts/${user_id}`);
         setPosts(response.data.posts);
       } catch (error) {
         console.error('Error fetching posts:', error);
@@ -47,7 +48,7 @@ function ManagePage() {
   const handleSaveEdit = async () => {
     try {
       // Make a request to update the post with the specified ID
-      const response = await axios.put(`InsertIPHERE:5000/api/posts/${editPostId}`, {
+      const response = await axios.put(`https://${config.fip}:5000/api/posts/${editPostId}`, {
         title: editedTitle,
         body: editedBody
       });
@@ -81,7 +82,7 @@ function ManagePage() {
     if (deleteConfirmationId === postId) {
       try {
         // Make a request to delete the post with the specified ID
-        const response = await axios.delete(`InsertIPHERE:5000/api/posts/${postId}`);
+        const response = await axios.delete(`https://${config.fip}:5000/api/posts/${postId}`);
         console.log(response.data.message); // Log success message
         // Remove the deleted post from the state
         setPosts(prevPosts => prevPosts.filter(post => post.post_id !== postId));

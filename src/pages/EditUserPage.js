@@ -3,6 +3,7 @@ import axios from 'axios';
 import classes from './EditUserPage.module.css';
 import useAuth from '../hooks/useAuth';
 import Card from '../components/ui/Card'
+import config from "../config";
 
 function EditUserPage() {
   const authenticated = useAuth();
@@ -19,7 +20,7 @@ function EditUserPage() {
         if (!user_id) {
           throw new Error('User ID not found in local storage');
         }
-        const response = await axios.get(`InsertIPHERE:5000/api/users/${user_id}`);
+        const response = await axios.get(`https://${config.fip}:5000/api/users/${user_id}`);
         const userData = response.data.user[0];
         setUser(userData);
         setEditedUsername(userData.username || '');
@@ -35,7 +36,7 @@ function EditUserPage() {
 
   const handleSaveEdit = async () => {
     try {
-      const response = await axios.put(`InsertIPHERE:5000/api/users/${user.user_id}`, {
+      const response = await axios.put(`https://${config.fip}:5000/api/users/${user.user_id}`, {
         username: editedUsername,
         email: editedEmail,
         phone_no: editedPhoneNo

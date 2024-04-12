@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import config from "../config";
 
 function HomePage() {
   const [posts, setPosts] = useState([]);
@@ -8,7 +9,7 @@ function HomePage() {
     const fetchPosts = async () => {
       try {
         // Fetch all posts from the backend
-        const response = await axios.get('InsertIPHERE:5000/api/posts');
+        const response = await axios.get(`https://${config.fip}:5000/api/posts`);
         setPosts(response.data.posts);
       } catch (error) {
         console.error('Error fetching posts:', error);

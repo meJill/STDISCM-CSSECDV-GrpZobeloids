@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useState } from "react";
+import config from "../config";
 
 class AuthService {
   isAuthenticated() {
@@ -30,7 +31,7 @@ class AuthService {
       const [password, setPassword] = useState('');
       setUsername(localStorage.getItem('username'));
       setPassword(localStorage.getItem('password'));
-      const response = await axios.post("InsertIPHERE:5000/isLoginA", {
+      const response = await axios.post(`https://${config.fip}:5000/isLoginA`, {
         username,
         password,
       });
@@ -46,7 +47,7 @@ class AuthService {
       const [password, setPassword] = useState('');
       setUsername(localStorage.getItem('username'));
       setPassword(localStorage.getItem('password'));
-      const response = await axios.post("InsertIPHERE:5000/isLogin", {
+      const response = await axios.post(`https://${config.fip}:5000/isLogin`, {
         username,
         password,
       });

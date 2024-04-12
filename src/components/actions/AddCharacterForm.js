@@ -3,6 +3,7 @@ import classes from "./AddCharacterForm.module.css";
 import Card from "../ui/Card";
 import ButtonCard from "../ui/ButtonCard";
 import axios from 'axios';
+import config from "../../config";
 
 function AddCharacterForm() {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -37,8 +38,8 @@ function AddCharacterForm() {
         formData.append('file', file);
       }
       
-
-      const response = await axios.post('InsertIPHERE:5000/api/addUserPost', formData, {
+      
+      const response = await axios.post(`https://${config.fip}:5000/api/addUserPost`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data' // Set proper headers for FormData
         }

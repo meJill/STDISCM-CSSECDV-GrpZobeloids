@@ -14,20 +14,20 @@ function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [captchaToken, setCaptchaToken] = useState('');
+  // const [captchaToken, setCaptchaToken] = useState('');
 
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      if (!captchaToken) {
-        setError("Please complete the CAPTCHA.");
-        return;
-      }
-      const response = await axios.post("InsertIPHERE:5000/login", {
+      // if (!captchaToken) {
+      //   setError("Please complete the CAPTCHA.");
+      //   return;
+      // }
+      const response = await axios.post(`https://${config.fip}:5000/login`, {
         username,
-        password,
-        captchaToken
+        password
+        // captchaToken
         
       });
 
@@ -35,7 +35,7 @@ function LoginPage() {
       // console.log("Login successful:", response);
 
       const now = new Date();
-      const expirationTime = now.getTime() + 10 * 1000; // 1 hour expiry time
+      const expirationTime = now.getTime() + 500 * 1000; // 1 hour expiry time
       localStorage.setItem("pfp", response.data.profile_photo.slice(4).replace("\\", "/"))
       localStorage.setItem("username", username);
       localStorage.setItem("password", password)
@@ -55,9 +55,9 @@ function LoginPage() {
     navigate("/signup-page");
   };
 
-  const handleCaptchaChange = (value) => {
-    setCaptchaToken(value); 
-  };
+  // const handleCaptchaChange = (value) => {
+  //   setCaptchaToken(value); 
+  // };
 
   return (
     <div className={classes.LoginContainer}>

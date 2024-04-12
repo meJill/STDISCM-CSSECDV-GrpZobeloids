@@ -2,6 +2,7 @@ import classes from "./SignUpPage.module.css";
 import Card from "../components/ui/Card";
 import React, { useState } from "react";
 import axios from "axios";
+import config from "../config";
 
 function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -26,7 +27,7 @@ function SignUpPage() {
             formData.append('photo', photo); // Append photo file
     
             // Send POST request with form data to /register endpoint
-            const response = await axios.post('InsertIPHERE:5000/register', formData, {
+            const response = await axios.post(`https://${config.fip}:5000/register`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
