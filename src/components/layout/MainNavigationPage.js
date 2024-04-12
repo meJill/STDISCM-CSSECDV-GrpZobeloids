@@ -16,6 +16,7 @@ function MainNavigationPage() {
     let username = localStorage.getItem("username");
     let password = localStorage.getItem("password")
     // console.log(username)
+    // if statement here
     try {
       const response = await axios.post("InsertIPHERE:5000/getPhoto", {
         username,

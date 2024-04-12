@@ -94,7 +94,6 @@ const checkTablesExist = () => {
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
 const db = mysql.createConnection(config.database);
-const db2 = mysql.createConnection(config2.database);
 app.use(cors());
 
 
@@ -126,27 +125,6 @@ db.connect(async (err) => {
   }
 
   console.log('Connected to MySQL Database');
-
-  try {
-    const databaseExists = await checkDatabaseExists();
-
-    if (!databaseExists) {
-      console.log('Database does not exist. Creating...');
-      createDatabase();
-    } else {
-      console.log('Database already exists, no need to create');
-    }
-  } catch (error) {
-    console.error('Error checking or creating database:', error);
-  }
-});
-
-db2.connect(async (err) => {
-  if (err) {
-    throw err;
-  }
-
-  console.log('Connected to 2nd MySQL Database');
 
   try {
     const databaseExists = await checkDatabaseExists();
