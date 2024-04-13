@@ -94,6 +94,8 @@ const checkTablesExist = () => {
 // MySQL database connection configuration
 // DEV NOTE: Set this up in the config.js file because security and all that jazz
 const db = mysql.createConnection(config.database);
+const db2 = mysql.createConnection(config.database2);
+
 app.use(cors());
 
 
@@ -140,6 +142,26 @@ db.connect(async (err) => {
   }
 });
 
+db2.connect(async (err) => {
+  if (err) {
+    throw err;
+  }
+
+  console.log('Connected to MySQL Database');
+
+  try {
+    const databaseExists = await checkDatabaseExists();
+
+    if (!databaseExists) {
+      console.log('Database does not exist. Creating...');
+      createDatabase();
+    } else {
+      console.log('Database already exists, no need to create');
+    }
+  } catch (error) {
+    console.error('Error checking or creating database:', error);
+  }
+});
 
 app.use(bodyParser.json());
 
@@ -198,10 +220,17 @@ app.post('/register', upload.single('photo'), async (req, res) => {
     }
 
     // Check if the username already exists
-    const [existingUser] = await db.promise().query(
-      'SELECT * FROM users WHERE username = ?',
-      [username]
-    );
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      const [existingUser] = await db.promise().query(
+        'SELECT * FROM users WHERE username = ?',
+        [username]
+      );
+    } else {
+      const [existingUser] = await db2.promise().query(
+        'SELECT * FROM users WHERE username = ?',
+        [username]
+      );
+    }
 
     if (existingUser.length > 0) {
       fs.unlinkSync(newPhotoFilePath);
@@ -212,13 +241,23 @@ app.post('/register', upload.single('photo'), async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Insert the new user into the database with the hashed password and uploaded photo filename
-    await db.promise().query(
-      'INSERT INTO users (username, password, email, phone_no, profile_photo_path) VALUES (?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, pnumber, newPhotoFilePath]
-    );
-    const photoUrl = `${newPhotoFilePath}`;
-    logAuth('User \'' + username + '\' added successfully');
-    res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      await db.promise().query(
+        'INSERT INTO users (username, password, email, phone_no, profile_photo_path) VALUES (?, ?, ?, ?, ?)',
+        [username, hashedPassword, email, pnumber, newPhotoFilePath]
+      );
+      const photoUrl = `${newPhotoFilePath}`;
+      logAuth('User \'' + username + '\' added successfully');
+      res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
+    } else {
+      await db2.promise().query(
+        'INSERT INTO users (username, password, email, phone_no, profile_photo_path) VALUES (?, ?, ?, ?, ?)',
+        [username, hashedPassword, email, pnumber, newPhotoFilePath]
+      );
+      const photoUrl = `${newPhotoFilePath}`;
+      logAuth('User \'' + username + '\' added successfully');
+      res.status(201).json({ message: 'User registered successfully', profile_photo: photoUrl });
+    }
   } catch (error) {
     logAuth('Authentication Error: ' + error);
 console.error('Error registering user:', error);
@@ -230,7 +269,11 @@ app.post('/getPhoto', async (req, res) => {
   const {username, password} = req.body
   console.log(req.body)
   try {
-    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      const [user] = await db.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+    } else {
+      const [user] = await db2.promise().query('SELECT * FROM users WHERE username = ?', [username]);
+    }
 
     // console.log(user[0].password)
 
@@ -266,8 +309,11 @@ app.post('/isLoginA', async (req, res) => {
 
   try {
     // Fetch user from the database and make sure not to get deleted users
-    const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
-
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      const [admin] = await db.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
+    } else {
+      const [admin] = await db2.promise().query('SELECT * FROM admin WHERE username = ?', [username]);
+    }
     if (admin.length === 1) {
       // User exists, compare passwords
       const hashedPassword = admin[0].password;
@@ -333,26 +379,48 @@ app.post('/login', async (req, res) => {
 
   try {    
     // Fetch user from the database and make sure not to get deleted users
-    const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
-
-    if (user.length === 1) {
-      // User exists, compare passwords
-      const hashedPassword = user[0].password;
-      const passwordMatch = await bcrypt.compare(password, hashedPassword);
-
-      if (passwordMatch) {
-        // Passwords match, return success response
-        logAuth(username + " successful login");
-        res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo_path , user_id: user[0].user_id});
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      const [user] = await db.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
+      if (user.length === 1) {
+        // User exists, compare passwords
+        const hashedPassword = user[0].password;
+        const passwordMatch = await bcrypt.compare(password, hashedPassword);
+  
+        if (passwordMatch) {
+          // Passwords match, return success response
+          logAuth(username + " successful login");
+          res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo_path , user_id: user[0].user_id});
+        } else {
+          // Passwords do not match, return error response
+          logAuth("\'" + username + "\' Password does not match");
+          res.status(401).json({ error: 'EEE Invalid username or password' });
+        }
       } else {
-        // Passwords do not match, return error response
-        logAuth("\'" + username + "\' Password does not match");
-        res.status(401).json({ error: 'EEE Invalid username or password' });
+        // No user found with provided username, return error response
+        logUserLoginError("\'" + username  + "\' not found");
+        res.status(401).json({ error: 'AAA Invalid username or password' });
       }
     } else {
-      // No user found with provided username, return error response
-      logUserLoginError("\'" + username  + "\' not found");
-      res.status(401).json({ error: 'AAA Invalid username or password' });
+      const [user] = await db2.promise().query('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL;', [username]);
+      if (user.length === 1) {
+        // User exists, compare passwords
+        const hashedPassword = user[0].password;
+        const passwordMatch = await bcrypt.compare(password, hashedPassword);
+  
+        if (passwordMatch) {
+          // Passwords match, return success response
+          logAuth(username + " successful login");
+          res.status(200).json({ message: 'Login successful', profile_photo: user[0].profile_photo_path , user_id: user[0].user_id});
+        } else {
+          // Passwords do not match, return error response
+          logAuth("\'" + username + "\' Password does not match");
+          res.status(401).json({ error: 'EEE Invalid username or password' });
+        }
+      } else {
+        // No user found with provided username, return error response
+        logUserLoginError("\'" + username  + "\' not found");
+        res.status(401).json({ error: 'AAA Invalid username or password' });
+      }
     }
   } catch (error) {
     console.error('Error logging in user:', error);
@@ -365,7 +433,12 @@ app.post('/login', async (req, res) => {
 app.get('/api/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
-    const [user] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
+    const [test] = await db.promise().query('SELECT username FROM admin WHERE user_id = ?', [userId]);
+    if (test.length > 0) {
+      const [user] = await db.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
+    } else {
+      const [user] = await db2.promise().query('SELECT * FROM users WHERE user_id = ?', [userId]);
+    }
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -383,10 +456,17 @@ app.put('/api/users/:id', async (req, res) => {
 
   try {
     // Update the user details in the database based on the user ID
-    await db.promise().query(
-      'UPDATE users SET username = ?, email = ?, phone_no = ? WHERE user_id = ?',
-      [username, email, phone_no, userId]
-    );
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      await db.promise().query(
+        'UPDATE users SET username = ?, email = ?, phone_no = ? WHERE user_id = ?',
+        [username, email, phone_no, userId]
+      );
+    } else {
+      await db2.promise().query(
+        'UPDATE users SET username = ?, email = ?, phone_no = ? WHERE user_id = ?',
+        [username, email, phone_no, userId]
+      );
+    }
 
     res.status(200).json({ message: 'User details updated successfully' });
   } catch (error) {
@@ -428,7 +508,7 @@ app.post('/admin-login-page', async (req, res) => {
 app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
   const { title, body, user_id } = req.body;
   const file = req.file;
-
+  
   try {
     let filePath = null;
 
@@ -449,10 +529,18 @@ app.post('/api/addUserPost', upload.single('file'), async (req, res) => {
     }
 
     // Insert the new post into the database
-    await db.promise().query(
-      'INSERT INTO user_posts (title, body, file_path, user_id) VALUES (?, ?, ?, ?)',
-      [title, body, filePath, user_id]
-    );
+    const [test] = await db.promise().query('SELECT * FROM user_posts WHERE user_id = ?', [user_id]);
+    if (test.length > 0) {
+      await db.promise().query(
+        'INSERT INTO user_posts (title, body, file_path, user_id) VALUES (?, ?, ?, ?)',
+        [title, body, filePath, user_id]
+      );
+    } else {
+      await db2.promise().query(
+        'INSERT INTO user_posts (title, body, file_path, user_id) VALUES (?, ?, ?, ?)',
+        [title, body, filePath, user_id]
+      );
+    }
     logTransaction("File input successful: " + title + " || " + body + " || " + filePath)
     res.status(201).json({ message: 'User post added successfully' });
   } catch (error) {
@@ -478,8 +566,9 @@ app.get('/api/posts', async (req, res) => {
   try {
     // Fetch all posts from the database
     const [posts] = await db.promise().query('SELECT * FROM user_posts');
+    const [posts2] = await db.promise().query('SELECT * FROM user_posts');
     logTransaction('Fetched all posts');
-    res.json({ posts });
+    res.json({ posts, posts2 });
   } catch (error) {
     console.error('Error fetching all posts:', error);
     logTransaction('Error fetching all posts: ' + error);
@@ -493,10 +582,18 @@ app.get('/api/posts/:user_id', async (req, res) => {
 
   try {
     // Fetch posts from the database based on the user_id
-    const [posts] = await db.promise().query(
-      'SELECT * FROM user_posts WHERE user_id = ?',
-      [user_id]
-    );
+    const [test] = await db.promise().query('SELECT * FROM user_posts WHERE user_id = ?', [user_id]);
+    if (test.length > 0) {
+      const [posts] = await db.promise().query(
+        'SELECT * FROM user_posts WHERE user_id = ?',
+        [user_id]
+      );
+    } else {
+      const [posts] = await db2.promise().query(
+        'SELECT * FROM user_posts WHERE user_id = ?',
+        [user_id]
+      );
+    }
     logTransaction('Fetched all posts by user_id: '+ user_id);
     res.json({ posts });
   } catch (error) {
@@ -513,10 +610,18 @@ app.put('/api/posts/:post_id', async (req, res) => {
 
   try {
     // Update the post in the database based on the post_id
-    await db.promise().query(
-      'UPDATE user_posts SET title = ?, body = ? WHERE post_id = ?',
-      [title, body, post_id]
-    );
+    const [test] = await db.promise().query('SELECT * FROM user_posts WHERE user_id = ?', [user_id]);
+    if (test.length > 0) {
+      await db.promise().query(
+        'UPDATE user_posts SET title = ?, body = ? WHERE post_id = ?',
+        [title, body, post_id]
+      );
+    } else {
+      await db2.promise().query(
+        'UPDATE user_posts SET title = ?, body = ? WHERE post_id = ?',
+        [title, body, post_id]
+      );
+    }
     logTransaction('Post id: ' + post_id + ' updated successfully');
     res.status(200).json({ message: 'Post updated successfully' });
   } catch (error) {
@@ -532,7 +637,12 @@ app.delete('/api/posts/:post_id', async (req, res) => {
 
   try {
     // Delete the post from the database based on the post_id
-    await db.promise().query('DELETE FROM user_posts WHERE post_id = ?', [post_id]);
+    const [test] = await db.promise().query('SELECT * FROM user_posts WHERE post_id = ?', [post_id]);
+    if (test.length > 0) {
+      await db.promise().query('DELETE FROM user_posts WHERE post_id = ?', [post_id]);
+    } else {
+      await db.promise().query('DELETE FROM user_posts WHERE post_id = ?', [post_id]);
+    }
     logTransaction('Post id: '+ post_id + ' deleted successfully')
     res.status(200).json({ message: 'Post deleted successfully' });
   } catch (error) {
@@ -547,8 +657,9 @@ app.get('/api/users', async (req, res) => {
   try {
     // Fetch all posts from the database
     const [users] = await db.promise().query('SELECT * FROM users WHERE deleted_at IS NULL');
+    const [users2] = await db2.promise().query('SELECT * FROM users WHERE deleted_at IS NULL');
     logAdmin('Fetched all users');
-    res.json({ users });
+    res.json({ users, users2 });
   } catch (error) {
     console.error('Error fetching users:', error);
     logAdmin('Error fetching users:' + error);
@@ -563,10 +674,17 @@ app.put('/api/users/edit/:user_id', async (req, res) => {
 
   try {
     // Update the user in the database based on the user_id
-    await db.promise().query(
-      'UPDATE users SET username = ?, email = ?, phone_no = ?, WHERE user_id = ?',
-      [username, email, phone_no, user_id]
-    );
+    if ((/^[a-m]/).test(username[0].toLowerCase())) {
+      await db.promise().query(
+        'UPDATE users SET username = ?, email = ?, phone_no = ?, WHERE user_id = ?',
+        [username, email, phone_no, user_id]
+      );
+    } else {
+      await db2.promise().query(
+        'UPDATE users SET username = ?, email = ?, phone_no = ?, WHERE user_id = ?',
+        [username, email, phone_no, user_id]
+      );
+    }
     logTransaction("\'" + user_id + "\' succesful update: " + username + " || " + email + " || " + phone_no) 
     res.status(200).json({ message: 'User updated successfully' });
   } catch (error) {
@@ -583,9 +701,22 @@ app.put('/api/users/delete/:user_id', async (req, res) => {
 
   try {
     // Delete the user from the database based on the user_id
-    await db.promise().query('UPDATE users SET deleted_at = ? WHERE user_id = ?', [date, user_id]);
-    logAdmin("\'" + user_id + "\' successfully deleted")
-    res.status(200).json({ message: 'User deleted successfully' });
+    const [test] = await db.promise().query('SELECT * FROM user WHERE post_id = ?', [post_id]);
+    if (test.length > 0) {
+      const [test] = await db.promise().query('SELECT username FROM user WHERE post_id = ?', [post_id]);
+      if (test.length > 0) {
+      await db.promise().query('UPDATE users SET deleted_at = ? WHERE user_id = ?', [date, user_id]);
+      logAdmin("\'" + user_id + "\' successfully deleted")
+      res.status(200).json({ message: 'User deleted successfully' });
+      } 
+    } else {
+      const [test] = await db2.promise().query('SELECT username FROM user WHERE post_id = ?', [post_id]);
+      if (test.length > 0) {
+      await db2.promise().query('UPDATE users SET deleted_at = ? WHERE user_id = ?', [date, user_id]);
+      logAdmin("\'" + user_id + "\' successfully deleted")
+      res.status(200).json({ message: 'User deleted successfully' });
+    }
+  }
   } catch (error) {
     console.error('Error deleting user:', error);
     logAdmin("\'" + user_id + "\' error deleting user: " + error)

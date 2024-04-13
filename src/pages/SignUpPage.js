@@ -40,6 +40,7 @@ function SignUpPage() {
               setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
                 
             } else {
+              console.log("wahhh")
               const response = await axios.post(`https://${config.dip}:5000/register`, formData, {
                   headers: {
                       'Content-Type': 'multipart/form-data'
@@ -47,8 +48,10 @@ function SignUpPage() {
               });
               setSignupSuccess(true);
               let path = '../'
+              console.log(response)
               path.concat(response.data.profile_photo)
               setProfilePhotoUrl(response.data.profile_photo); // Set profile photo URL from response data
+              console.log("wajer")
             }
     
             // Reset error and set signup success
